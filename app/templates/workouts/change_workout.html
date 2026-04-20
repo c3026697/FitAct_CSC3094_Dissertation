@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Change Workout – FitAct{% endblock %}
+{% block content %}
+<div class="page-content">
+
+    <div style="margin-bottom:24px;">
+        <a href="{{ url_for('workouts.workout_page') }}" class="btn-back" style="display:inline-flex;">&#8592;</a>
+        <span style="color:#3972bf; font-weight:700; margin-left:10px;">Workout</span>
+    </div>
+
+    <h1 class="page-title">Change Workout</h1>
+
+    <div style="display:grid; grid-template-columns:1fr 3px 1fr; gap:0; max-width:900px; margin:40px auto 0;">
+        <div style="padding-right:40px;">
+            <h2 class="section-heading">Within recommended programme<br>Coming Tuesday</h2>
+        </div>
+        <div style="background:#3972bf;"></div>
+        <div style="padding-left:40px;">
+            <h2 class="section-heading">New Workout</h2>
+            <div class="mt-2">
+                <a href="{{ url_for('workouts.repository') }}" class="btn-fitact mb-2" style="max-width:300px;">From Workouts Repository</a>
+                <a href="{{ url_for('workouts.saved') }}" class="btn-fitact mb-2" style="max-width:300px;">From Saved Workouts</a>
+                <a href="{{ url_for('workouts.create_custom') }}" class="btn-fitact" style="max-width:300px;">Create Custom Workout</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

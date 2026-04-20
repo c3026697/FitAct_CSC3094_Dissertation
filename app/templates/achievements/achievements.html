@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Achievements – FitAct{% endblock %}
+{% block content %}
+<div class="page-content">
+
+    <h1 class="page-title">Achievements</h1>
+
+    <div style="text-align:center; margin: 20px 0 32px;">
+        <img src="{{ url_for('static', filename='images/badge_trophy.png') }}"
+             alt="Achievements trophy"
+             style="width: 120px; height: 120px; object-fit: contain;">
+    </div>
+
+    <h2 class="section-heading" style="text-align:left; padding-left:20px;">Badges</h2>
+
+    <div style="display:flex; gap:24px; flex-wrap:wrap; padding: 0 20px;">
+        <p class="text-fitact-dark">Coming Thursday.</p>
+    </div>
+
+</div>
+{% endblock %}

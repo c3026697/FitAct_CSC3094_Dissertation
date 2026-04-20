@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Workout – FitAct{% endblock %}
+{% block content %}
+<div class="page-content">
+
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 16px;">
+        <a href="{{ url_for('programme.my_programme') }}" class="btn-dark-pill">My Programme</a>
+        <h1 class="page-title" style="flex:1;">Workout</h1>
+        <a href="{{ url_for('workouts.change_workout') }}" class="btn-dark-pill">Change today's workout</a>
+    </div>
+
+    <h2 class="page-subtitle">Coming Tuesday</h2>
+    <p class="section-heading">Exercises</p>
+
+</div>
+{% endblock %}

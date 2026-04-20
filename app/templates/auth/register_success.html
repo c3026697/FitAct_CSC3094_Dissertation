@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Created – FitAct</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<nav class="auth-nav">
+    <a href="{{ url_for('auth.login') }}" class="btn-auth-pill">Login</a>
+    <div></div>
+</nav>
+
+<div style="text-align:center; margin-top: 60px;">
+
+    <div class="logo-block">
+        <img src="{{ url_for('static', filename='images/logo.png') }}"
+             alt="FitAct dumbbell logo"
+             style="width: 120px; height: auto; margin-bottom: 12px;">
+        <h1 class="logo-text">FitAct</h1>
+        <p class="logo-slogan">From Fitness Awareness to Action</p>
+    </div>
+
+    <div style="margin-top: 60px;">
+        <h2 style="font-size:1.8rem; font-weight:800; color:#000000;">Account Created Successfully!</h2>
+        <p style="font-size:1.2rem; margin-top: 24px; color:#000000;">
+            <a href="{{ url_for('auth.login') }}" style="color:#000000; font-weight:700; text-decoration:underline;">Login</a>
+            to access your recommended programme
+        </p>
+    </div>
+
+</div>
+</body>
+</html>

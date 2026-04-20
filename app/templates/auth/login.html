@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login – FitAct</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<nav class="auth-nav">
+    <a href="{{ url_for('auth.login') }}" class="btn-auth-pill">Login</a>
+    <div></div>
+    <a href="{{ url_for('auth.register') }}" class="btn-auth-pill">Sign up</a>
+</nav>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div style="padding: 0 40px;">
+            {% for category, message in messages %}
+                <div class="fitact-alert fitact-alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<div style="text-align:center; margin-top: 40px;">
+
+    <div class="logo-block">
+        <img src="{{ url_for('static', filename='images/logo.png') }}"
+             alt="FitAct dumbbell logo"
+             style="width: 120px; height: auto; margin-bottom: 12px;">
+        <h1 class="logo-text">FitAct</h1>
+        <p class="logo-slogan">From Fitness Awareness to Action</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('auth.login') }}" style="margin-top: 48px;">
+        <input type="email"    name="email"    class="fitact-input" placeholder="Email"    required>
+        <input type="password" name="password" class="fitact-input" placeholder="Password" required>
+        <div style="margin-top: 12px;">
+            <button type="submit" class="btn-fitact" style="max-width: 200px;">Login</button>
+        </div>
+    </form>
+
+    <p style="margin-top: 20px; color: #012759; font-size: 0.9rem;">
+        Don't have an account?
+        <a href="{{ url_for('auth.register') }}" style="color:#3972bf; font-weight:600;">Sign up</a>
+    </p>
+
+</div>
+</body>
+</html>
