@@ -4,11 +4,51 @@
 <div class="page-content">
 
     <h1 class="page-title">Workouts repository</h1>
-    <h2 class="section-heading">Workouts</h2>
+    <h2 class="section-heading" style="margin-top:8px;">Workouts</h2>
 
-    <p class="text-center text-fitact-dark" style="margin-top:40px;">
-        Coming Wednesday.
-    </p>
+    <div style="max-width:520px; margin:24px auto 0;">
+        {% for workout in workouts %}
+        <div class="workout-row" style="margin-bottom:14px;">
+            <a href="{{ url_for('workouts.workout_info', workout_id=workout.id) }}"
+               class="workout-row-btn" style="text-decoration:none; display:block; border-radius:12px 0 0 12px; padding:16px 24px;">
+                {{ workout.name }}
+            </a>
+            <button class="workout-row-chevron" onclick="toggleMenu(this)">&#8250;</button>
+            <div class="workout-action-menu">
+                <a href="{{ url_for('workouts.start_from_repository', workout_id=workout.id) }}">Start</a>
+                <hr>
+                <form method="POST" action="{{ url_for('workouts.save_workout', workout_id=workout.id) }}" style="margin:0;">
+                    {% if workout.id in saved_ids %}
+                        <span style="color:#87ceeb; font-size:0.85rem;">Saved ✓</span>
+                    {% else %}
+                        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font-size:0.9rem;padding:4px 0;">Save</button>
+                    {% endif %}
+                </form>
+                <hr>
+                <a href="{{ url_for('workouts.workout_info', workout_id=workout.id) }}">Info</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleMenu(btn) {
+    var menu = btn.nextElementSibling;
+    document.querySelectorAll('.workout-action-menu.show').forEach(function(m) {
+        if (m !== menu) m.classList.remove('show');
+    });
+    menu.classList.toggle('show');
+}
+document.addEventListener('click', function(e) {
+    if (!e.target.classList.contains('workout-row-chevron')) {
+        document.querySelectorAll('.workout-action-menu.show').forEach(function(m) {
+            m.classList.remove('show');
+        });
+    }
+});
+</script>
 {% endblock %}

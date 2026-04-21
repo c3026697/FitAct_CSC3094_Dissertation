@@ -4,11 +4,37 @@
 <div class="page-content">
 
     <h1 class="page-title">Progress</h1>
-    <h2 class="section-heading">Completed Workouts</h2>
-    <p class="text-center" style="font-size:2rem; font-weight:800; color:#000;">0</p>
 
-    <h2 class="section-heading" style="margin-top:32px;">Past Workouts</h2>
-    <p class="text-center text-fitact-dark">Coming Thursday.</p>
+    <h2 class="section-heading" style="margin-top:16px;">Completed Workouts</h2>
+    <p class="text-center" style="font-size:2.5rem; font-weight:800; color:#000000; margin:8px 0 32px;">
+        {{ logs|length }}
+    </p>
+
+    <h2 class="section-heading">Past Workouts</h2>
+
+    <div style="max-width:700px; margin:24px auto 0;">
+        {% if logs %}
+            {% for log in logs %}
+            <div class="log-card">
+                <div class="log-card-text">
+                    <p><strong>{{ log.workout.name }}</strong></p>
+                    <p>Date: {{ log.completed_at.strftime('%d %b %Y, %H:%M') }}</p>
+                    <p>Exercises logged: {{ log.logged_exercises|length }}</p>
+                </div>
+                <div class="log-card-actions">
+                    <form method="POST" action="{{ url_for('progress.delete_log', log_id=log.id) }}">
+                        <button type="submit" class="log-card-icon"
+                                onclick="return confirm('Delete this log?')" title="Delete">&#10005;</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center text-fitact-dark" style="margin-top:40px;">
+                No workouts logged yet. Complete your first workout to see it here.
+            </p>
+        {% endif %}
+    </div>
 
 </div>
 {% endblock %}

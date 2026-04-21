@@ -1,16 +1,58 @@
 {% extends 'base.html' %}
 {% block title %}Workout – FitAct{% endblock %}
 {% block content %}
-<div class="page-content">
+<div class="page-content" style="max-width:620px; margin:0 auto;">
 
     <div style="margin-bottom:24px;">
         <a href="{{ url_for('workouts.workout_page') }}" class="btn-cancel">
-            Cancel <span class="cancel-x">✕</span>
+            Cancel <span class="cancel-x">&#10005;</span>
         </a>
     </div>
 
     <h1 class="page-title">Workout:</h1>
-    <h2 class="page-subtitle">Coming Thursday.</h2>
+    <h2 class="page-subtitle" style="margin-bottom:32px;">{{ workout.name }}</h2>
+    <p class="section-heading">Exercises</p>
 
+    <form method="POST" action="{{ url_for('tracking.log_workout', workout_id=workout.id) }}">
+
+        {% for we in exercises %}
+        <div style="margin-bottom:36px; text-align:center;">
+            <h3 style="color:#3972bf; font-size:1.2rem; font-weight:800; margin-bottom:4px;">
+                {{ we.exercise.name }}:
+            </h3>
+            <p style="color:#012759; font-size:0.85rem; margin-bottom:6px;">
+                Target: {{ we.sets_target }} sets &times; {{ we.reps_target }} reps
+            </p>
+            <a href="{{ url_for('exercises.guidance', exercise_id=we.exercise.id) }}"
+               style="color:#3972bf; font-size:0.85rem; text-decoration:underline;">
+               Exercise Guidance
+            </a>
+
+            <div class="sets-reps-row" style="margin-top:14px;">
+                <div>
+                    <p class="sets-reps-label">Sets</p>
+                    <input type="number" name="sets_{{ we.id }}" class="sets-reps-input"
+                           value="{{ we.sets_target }}" min="0" max="20">
+                </div>
+                <div>
+                    <p class="sets-reps-label">Reps</p>
+                    <input type="number" name="reps_{{ we.id }}" class="sets-reps-input"
+                           value="{{ we.reps_target }}" min="0" max="100">
+                </div>
+            </div>
+        </div>
+
+        {% if not loop.last %}
+        <hr style="border:none; border-top:1px solid #e8edf5; margin:8px 0 28px;">
+        {% endif %}
+        {% endfor %}
+
+        <div style="text-align:center; margin-top:32px;">
+            <button type="submit" class="btn-fitact" style="max-width:260px;">
+                End and Log Workout
+            </button>
+        </div>
+
+    </form>
 </div>
 {% endblock %}

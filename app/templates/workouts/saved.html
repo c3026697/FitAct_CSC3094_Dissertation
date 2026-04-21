@@ -5,9 +5,53 @@
 
     <h1 class="page-title">Saved Workouts</h1>
 
-    <p class="text-center text-fitact-dark" style="margin-top:40px;">
-        Coming Wednesday.
-    </p>
+    <div style="max-width:520px; margin:32px auto 0;">
+        {% if saved_workouts %}
+            {% for sw in saved_workouts %}
+            <div class="workout-row" style="margin-bottom:14px;">
+                <a href="{{ url_for('workouts.workout_info', workout_id=sw.workout.id) }}"
+                   class="workout-row-btn" style="text-decoration:none; display:block; border-radius:12px 0 0 12px; padding:16px 24px;">
+                    {{ sw.workout.name }}
+                </a>
+                <button class="workout-row-chevron" onclick="toggleMenu(this)">&#8801;</button>
+                <div class="workout-action-menu">
+                    <a href="{{ url_for('tracking.execute', workout_id=sw.workout.id) }}">Start</a>
+                    <hr>
+                    <form method="POST" action="{{ url_for('workouts.delete_saved', saved_id=sw.id) }}" style="margin:0;">
+                        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font-size:0.9rem;padding:4px 0;"
+                                onclick="return confirm('Remove this workout?')">Delete</button>
+                    </form>
+                    <hr>
+                    <a href="{{ url_for('workouts.workout_info', workout_id=sw.workout.id) }}">Info</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center text-fitact-dark" style="margin-top:40px;">
+                No saved workouts yet.
+                <a href="{{ url_for('workouts.repository') }}" style="color:#3972bf; font-weight:600;">Browse the repository</a>
+            </p>
+        {% endif %}
+    </div>
 
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleMenu(btn) {
+    var menu = btn.nextElementSibling;
+    document.querySelectorAll('.workout-action-menu.show').forEach(function(m) {
+        if (m !== menu) m.classList.remove('show');
+    });
+    menu.classList.toggle('show');
+}
+document.addEventListener('click', function(e) {
+    if (!e.target.classList.contains('workout-row-chevron')) {
+        document.querySelectorAll('.workout-action-menu.show').forEach(function(m) {
+            m.classList.remove('show');
+        });
+    }
+});
+</script>
 {% endblock %}

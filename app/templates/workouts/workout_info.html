@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}{{ workout.name }} – FitAct{% endblock %}
+{% block content %}
+<div class="page-content" style="max-width:560px; margin:0 auto;">
+
+    <div style="margin-bottom:24px;">
+        <a href="javascript:history.back()" class="btn-back">&#8592;</a>
+    </div>
+
+    <h1 class="page-title">{{ workout.name }}</h1>
+    <p class="section-heading">Exercises:</p>
+
+    <div style="margin:20px 0;">
+        {% for we in exercises %}
+        <div class="exercise-row">
+            <span class="exercise-btn">{{ we.exercise.name }}</span>
+            <a href="{{ url_for('exercises.guidance', exercise_id=we.exercise.id) }}"
+               class="exercise-info-arrow">info &#8250;</a>
+        </div>
+        <p style="text-align:center; color:#012759; font-size:0.85rem; margin:-6px 0 10px;">
+            {{ we.sets_target }} sets &times; {{ we.reps_target }} reps
+        </p>
+        {% endfor %}
+    </div>
+
+    <div style="display:flex; gap:14px; justify-content:center; margin-top:28px; flex-wrap:wrap;">
+        <a href="{{ url_for('tracking.execute', workout_id=workout.id) }}" class="btn-fitact" style="max-width:200px;">
+            Start Workout
+        </a>
+        {% if not is_saved %}
+        <form method="POST" action="{{ url_for('workouts.save_workout', workout_id=workout.id) }}">
+            <button type="submit" class="btn-dark-pill">Save Workout</button>
+        </form>
+        {% else %}
+        <span class="btn-dark-pill" style="opacity:0.6; cursor:default;">Saved ✓</span>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

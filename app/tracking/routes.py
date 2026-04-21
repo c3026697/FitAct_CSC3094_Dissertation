@@ -1,9 +1,69 @@
-from flask import Blueprint, render_template
-from flask_login import login_required
+from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask_login import login_required, current_user
+from datetime import datetime
+from app.extensions import db
+from app.models import (Workout, WorkoutExercise, WorkoutLog,
+                        LoggedExercise, Achievement, UserAchievement)
 
 tracking_bp = Blueprint('tracking', __name__)
 
-@tracking_bp.route('/tracking')
+
+def award_first_workout_badge(user):
+    log_count = WorkoutLog.query.filter_by(user_id=user.id).count()
+    if log_count == 1:
+        achievement = Achievement.query.filter_by(milestone_type='first_workout').first()
+        if achievement:
+            already = UserAchievement.query.filter_by(
+                user_id=user.id, achievement_id=achievement.id
+            ).first()
+            if not already:
+                db.session.add(UserAchievement(
+                    user_id=user.id, achievement_id=achievement.id
+                ))
+                db.session.commit()
+
+
+@tracking_bp.route('/workout/<int:workout_id>/execute')
 @login_required
-def execute():
-    return render_template('tracking/execute.html')
+def execute(workout_id):
+    workout = Workout.query.get_or_404(workout_id)
+    exercises = (
+        WorkoutExercise.query
+        .filter_by(workout_id=workout.id)
+        .order_by(WorkoutExercise.exercise_order)
+        .all()
+    )
+    return render_template('tracking/execute.html', workout=workout, exercises=exercises)
+
+
+@tracking_bp.route('/workout/<int:workout_id>/log', methods=['POST'])
+@login_required
+def log_workout(workout_id):
+    workout = Workout.query.get_or_404(workout_id)
+    exercises = (
+        WorkoutExercise.query
+        .filter_by(workout_id=workout.id)
+        .order_by(WorkoutExercise.exercise_order)
+        .all()
+    )
+
+    log = WorkoutLog(user_id=current_user.id, workout_id=workout.id,
+                     completed_at=datetime.utcnow())
+    db.session.add(log)
+    db.session.flush()
+
+    for we in exercises:
+        sets_done = int(request.form.get(f'sets_{we.id}', we.sets_target) or we.sets_target)
+        reps_done = int(request.form.get(f'reps_{we.id}', we.reps_target) or we.reps_target)
+        db.session.add(LoggedExercise(
+            log_id=log.id,
+            workout_exercise_id=we.id,
+            exercise_id=we.exercise_id,
+            sets_completed=sets_done,
+            reps_completed=reps_done
+        ))
+
+    db.session.commit()
+    award_first_workout_badge(current_user)
+    flash('Workout logged!', 'success')
+    return redirect(url_for('progress.progress'))
