@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}{{ programme.name }} – FitAct{% endblock %}
+{% block content %}
+<div class="page-content" style="max-width:560px;">
+
+    <div style="margin-bottom:24px;">
+        <a href="{{ url_for('programme.change_programme') }}" class="btn-back">Back to programmes</a>
+    </div>
+
+    <h1 class="page-title">{{ programme.name }}</h1>
+    <p style="text-align:center; color:var(--muted); font-size:0.875rem; margin-bottom:28px;">
+        {{ programme.description }}
+    </p>
+
+    <div class="workout-list">
+        {% for pw in programme.programme_workouts %}
+        <div class="workout-item">
+            <a href="{{ url_for('programme.workout_preview', programme_id=programme.id, workout_id=pw.workout.id) }}"
+               class="workout-item-info" style="text-decoration:none;">
+                <span class="workout-item-day">Day {{ pw.day_number }}</span>
+                <span class="workout-item-name">{{ pw.workout.name }}</span>
+            </a>
+            <a href="{{ url_for('programme.workout_preview', programme_id=programme.id, workout_id=pw.workout.id) }}"
+               class="workout-item-btn" style="text-decoration:none; color:var(--blue);">→</a>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

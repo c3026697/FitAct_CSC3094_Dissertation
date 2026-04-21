@@ -100,7 +100,8 @@ def confirm_accept():
     programme_name = session.get('recommended_programme_name')
 
     if programme_id:
-        current_user.current_programme_id = programme_id
+        user = User.query.get(current_user.id)  # ← fetch fresh from DB
+        user.current_programme_id = programme_id
         db.session.commit()
         session.pop('recommended_programme_id', None)
         session.pop('recommended_programme_name', None)

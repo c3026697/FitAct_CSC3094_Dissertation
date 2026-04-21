@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Edit Profile – FitAct{% endblock %}
+{% block content %}
+<div class="page-content" style="max-width:480px;">
+
+    <div style="margin-bottom:24px;">
+        <a href="{{ url_for('main.account') }}" class="btn-back">Back</a>
+    </div>
+
+    <h1 class="page-title">Edit Profile</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}{% for c, m in messages %}
+            <div class="fitact-alert fitact-alert-{{ c }}">{{ m }}</div>
+        {% endfor %}{% endif %}
+    {% endwith %}
+
+    <div style="background:var(--white); border:1px solid var(--border); border-radius:var(--radius-lg);
+                padding:28px 32px; box-shadow:var(--shadow-sm); margin-top:24px;">
+        <form method="POST" action="{{ url_for('main.edit_profile') }}">
+            <label class="account-field-label" style="margin-bottom:6px;">Username</label>
+            <input type="text" name="username" class="fitact-input"
+                   style="margin:0 0 20px 0; max-width:100%; text-align:left; padding-left:16px;"
+                   value="{{ current_user.username }}" required>
+
+            <label class="account-field-label" style="margin-bottom:6px;">Email</label>
+            <input type="email" name="email" class="fitact-input"
+                   style="margin:0 0 24px 0; max-width:100%; text-align:left; padding-left:16px;"
+                   value="{{ current_user.email }}" required>
+
+            <button type="submit" class="btn-fitact">Save changes</button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

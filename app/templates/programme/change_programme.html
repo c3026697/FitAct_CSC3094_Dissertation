@@ -1,32 +1,48 @@
 {% extends 'base.html' %}
 {% block title %}Choose Programme – FitAct{% endblock %}
 {% block content %}
-<div class="page-content" style="max-width:640px; margin:0 auto;">
+<div class="page-content" style="max-width:560px;">
 
     <div style="margin-bottom:24px;">
-        <a href="{{ url_for('programme.my_programme') }}" class="btn-cancel">
-            Cancel <span class="cancel-x">&#10005;</span>
-        </a>
+        {% set back = request.args.get('from', 'account') %}
+        {% if back == 'programme' %}
+            <a href="{{ url_for('programme.my_programme') }}" class="btn-back">Back</a>
+        {% else %}
+            <a href="{{ url_for('main.account') }}" class="btn-back">Back</a>
+        {% endif %}
     </div>
 
-    <h1 class="page-title">Choose a new programme</h1>
+    <h1 class="page-title">Choose a programme</h1>
+    <p style="text-align:center; color:var(--muted); font-size:0.875rem; margin-bottom:32px;">
+        Select a training split. Click the arrow to preview its workouts.
+    </p>
 
-    <form method="POST" action="{{ url_for('programme.change_programme') }}" style="margin-top:32px;">
-        <div style="display:flex; flex-direction:column; gap:14px; max-width:480px; margin:0 auto;">
+    <form method="POST" action="{{ url_for('programme.change_programme') }}{% if request.args.get('from') %}?from={{ request.args.get('from') }}{% endif %}">
+        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:28px;">
             {% for prog in all_programmes %}
-            <label style="cursor:pointer;">
-                <input type="radio" name="programme_id" value="{{ prog.id }}"
-                       {% if current_user.current_programme_id == prog.id %}checked{% endif %}
-                       style="display:none;" class="prog-radio">
-                <div class="choice-btn prog-option" style="margin:0; border-radius:10px;">
-                    {{ prog.name }}
-                </div>
-            </label>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <label style="flex:1; cursor:pointer;">
+                    <input type="radio" name="programme_id" value="{{ prog.id }}"
+                           {% if current_user.current_programme_id == prog.id %}checked{% endif %}
+                           class="prog-radio" style="display:none;">
+                    <div class="choice-btn prog-option {% if current_user.current_programme_id == prog.id %}selected{% endif %}"
+                         style="max-width:100%; margin:0;">
+                        {{ prog.name }}
+                    </div>
+                </label>
+                <a href="{{ url_for('programme.programme_preview', programme_id=prog.id) }}"
+                   style="flex-shrink:0; width:36px; height:36px; display:flex; align-items:center;
+                          justify-content:center; border:1px solid var(--border); border-radius:8px;
+                          color:var(--blue); text-decoration:none; font-size:1rem;
+                          background:var(--white); transition:all var(--t);"
+                   title="Preview {{ prog.name }}">→</a>
+            </div>
             {% endfor %}
         </div>
-
-        <div style="text-align:center; margin-top:32px;">
-            <button type="submit" class="btn-fitact" style="max-width:220px;">Save &amp; Exit</button>
+        <div style="text-align:center;">
+            <button type="submit" class="btn-fitact" style="max-width:200px; display:inline-block;">
+                Save & exit
+            </button>
         </div>
     </form>
 
@@ -36,14 +52,8 @@
 {% block scripts %}
 <script>
 document.querySelectorAll('.prog-radio').forEach(function(radio) {
-    // Highlight already-selected on load
-    if (radio.checked) {
-        radio.nextElementSibling.classList.add('selected');
-    }
     radio.addEventListener('change', function() {
-        document.querySelectorAll('.prog-option').forEach(function(d) {
-            d.classList.remove('selected');
-        });
+        document.querySelectorAll('.prog-option').forEach(function(d) { d.classList.remove('selected'); });
         this.nextElementSibling.classList.add('selected');
     });
 });

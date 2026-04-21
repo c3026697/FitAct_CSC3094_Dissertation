@@ -3,57 +3,52 @@
 {% block content %}
 <div class="page-content">
 
-    <!-- Top-right action buttons -->
-    <div style="display:flex; justify-content:flex-end; gap:16px;
-                margin-bottom:24px; flex-wrap:wrap;">
-        <a href="{{ url_for('programme.change_programme') }}" class="btn-dark-pill">
-            Manually Change Programme
-        </a>
-        <a href="{{ url_for('questionnaire.questionnaire') }}" class="btn-dark-pill">
-            Recommend a new programme
-        </a>
+    <div style="display:flex; align-items:center; margin-bottom:24px;">
+        <a href="{{ url_for('workouts.workout_page') }}" class="btn-back">Back</a>
+        <div style="flex:1;"></div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+            <a href="{{ url_for('programme.change_programme') }}?from=programme" class="btn-dark-pill">Manually change</a>
+            <a href="{{ url_for('questionnaire.questionnaire') }}" class="btn-dark-pill">Get new recommendation</a>
+        </div>
     </div>
 
     {% if programme %}
+        <h1 class="page-title">My Programme</h1>
+        <div class="programme-card" style="max-width:520px; margin:16px auto 28px;">
+            <div class="programme-card-label">Currently allocated</div>
+            <div class="programme-card-name">{{ programme.name }}</div>
+        </div>
 
-        <h1 class="page-title">My Programme:</h1>
-        <h2 class="page-subtitle" style="margin-bottom:24px;">{{ programme.name }}</h2>
         <p class="section-heading">Workouts</p>
-
-        <div style="max-width:480px; margin:20px auto 0;">
+        <div class="workout-list">
             {% for pw in programme_workouts %}
-            <div class="workout-row" style="margin-bottom:14px;">
-                <span class="workout-row-btn" style="border-radius:12px 0 0 12px; padding:16px 24px;">
-                    {{ pw.workout.name }}
-                </span>
-                <button class="workout-row-chevron" onclick="toggleMenu(this)">&#8250;</button>
-                <div class="workout-action-menu">
-                    <a href="{{ url_for('tracking.execute', workout_id=pw.workout.id) }}">Start</a>
-                    <hr>
+            <div class="workout-item">
+                <div class="workout-item-info">
+                    <span class="workout-item-day">Day {{ pw.day_number }}</span>
+                    <span class="workout-item-name">{{ pw.workout.name }}</span>
+                </div>
+                <button class="workout-item-btn" onclick="toggleMenu(this)" aria-label="Actions">&#8942;</button>
+                <div class="action-menu">
+                    <a href="{{ url_for('tracking.execute', workout_id=pw.workout.id) }}">▶ Start</a>
                     <form method="POST" action="{{ url_for('workouts.save_workout', workout_id=pw.workout.id) }}" style="margin:0;">
-                        <button type="submit" style="background:none;border:none;color:#fff;
-                                cursor:pointer;font-size:0.9rem;padding:4px 0;">Save</button>
+                        <button type="submit">★ Save</button>
                     </form>
-                    <hr>
-                    <a href="{{ url_for('workouts.workout_info', workout_id=pw.workout.id) }}">Info</a>
+                    <a href="{{ url_for('workouts.workout_info', workout_id=pw.workout.id) }}">ℹ Info</a>
                 </div>
             </div>
             {% endfor %}
         </div>
 
     {% else %}
-
-        <h1 class="page-title">My Programme:</h1>
-        <div style="text-align:center; margin-top:48px;">
-            <p style="color:#012759; font-size:1.1rem;">
-                You have not been allocated a programme yet.
-            </p>
+        <h1 class="page-title">My Programme</h1>
+        <div style="text-align:center; padding:60px 20px;">
+            <div style="font-size:3rem; margin-bottom:16px;">📋</div>
+            <p style="color:var(--muted); margin-bottom:20px;">You haven't been allocated a programme yet.</p>
             <a href="{{ url_for('questionnaire.questionnaire') }}"
-               class="btn-fitact" style="max-width:260px; margin-top:20px; display:block; margin-left:auto; margin-right:auto;">
-                Get my recommended programme
+               class="btn-fitact" style="max-width:240px; display:inline-block;">
+               Get my recommended programme
             </a>
         </div>
-
     {% endif %}
 
 </div>
@@ -63,16 +58,14 @@
 <script>
 function toggleMenu(btn) {
     var menu = btn.nextElementSibling;
-    document.querySelectorAll('.workout-action-menu.show').forEach(function(m) {
+    document.querySelectorAll('.action-menu.show').forEach(function(m) {
         if (m !== menu) m.classList.remove('show');
     });
     menu.classList.toggle('show');
 }
 document.addEventListener('click', function(e) {
-    if (!e.target.classList.contains('workout-row-chevron')) {
-        document.querySelectorAll('.workout-action-menu.show').forEach(function(m) {
-            m.classList.remove('show');
-        });
+    if (!e.target.classList.contains('workout-item-btn')) {
+        document.querySelectorAll('.action-menu.show').forEach(function(m) { m.classList.remove('show'); });
     }
 });
 </script>

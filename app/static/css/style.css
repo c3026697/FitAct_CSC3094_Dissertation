@@ -1,553 +1,468 @@
-/* ============================================================
-   FitAct — Global Stylesheet
-   Palette: #000000 | #3972bf | #012759 | #87ceeb | #ffffff
-   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-/* --- Reset & Base ----------------------------------------- */
-*, *::before, *::after { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --blue: #3972bf;
+    --dark-blue: #012759;
+    --light-blue: #87ceeb;
+    --black: #000000;
+    --white: #ffffff;
+    --bg: #f6f8fc;
+    --border: #e2e8f4;
+    --muted: #64748b;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-xl: 28px;
+    --shadow-sm: 0 1px 3px rgba(1,39,89,0.06), 0 1px 2px rgba(1,39,89,0.04);
+    --shadow-md: 0 4px 16px rgba(1,39,89,0.08), 0 2px 4px rgba(1,39,89,0.04);
+    --shadow-lg: 0 8px 32px rgba(1,39,89,0.12);
+    --t: 0.18s cubic-bezier(0.4,0,0.2,1);
+}
+
+html { scroll-behavior: smooth; }
 
 body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background-color: #ffffff;
-    color: #000000;
-    margin: 0;
-    padding: 0;
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--dark-blue);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
 }
 
-/* --- Navbar ----------------------------------------------- */
+/* ── Navbar ─────────────────────────────────────────────── */
 .fitact-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 18px 40px;
-    background: #ffffff;
-    border-bottom: 1px solid #e8edf5;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 64px;
+    background: var(--white); border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: var(--shadow-sm);
 }
-
-.fitact-nav .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 32px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
+.fitact-nav .nav-links { display: flex; align-items: center; gap: 2px; list-style: none; }
 .fitact-nav .nav-links a {
-    color: #012759;
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 500;
-    transition: color 0.15s;
+    color: var(--muted); text-decoration: none;
+    font-size: 0.875rem; font-weight: 500;
+    padding: 7px 13px; border-radius: var(--radius-sm);
+    transition: all var(--t); white-space: nowrap;
 }
-
-.fitact-nav .nav-links a:hover,
+.fitact-nav .nav-links a:hover { color: var(--dark-blue); background: var(--bg); }
 .fitact-nav .nav-links a.active {
-    color: #3972bf;
+    color: var(--blue); background: rgba(57,114,191,0.09); font-weight: 600;
 }
-
-.fitact-nav .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
+.fitact-nav .nav-right { display: flex; align-items: center; gap: 10px; }
 .fitact-nav .nav-right a.my-account {
-    color: #012759;
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 500;
+    color: var(--muted); text-decoration: none;
+    font-size: 0.875rem; font-weight: 500;
+    padding: 7px 13px; border-radius: var(--radius-sm);
+    transition: all var(--t);
 }
-
+.fitact-nav .nav-right a.my-account:hover { color: var(--dark-blue); background: var(--bg); }
 .btn-logout {
-    background-color: #3972bf;
-    color: #ffffff !important;
-    border: none;
-    border-radius: 50px;
-    padding: 10px 28px;
-    font-size: 1rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background-color 0.15s;
-    cursor: pointer;
+    background: var(--blue); color: var(--white) !important;
+    border: none; border-radius: var(--radius-xl);
+    padding: 8px 22px; font-size: 0.875rem; font-weight: 600;
+    text-decoration: none; cursor: pointer; font-family: inherit;
+    box-shadow: 0 2px 8px rgba(57,114,191,0.3);
+    transition: all var(--t);
 }
-
 .btn-logout:hover {
-    background-color: #012759;
-    color: #ffffff !important;
+    background: var(--dark-blue); transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(1,39,89,0.3);
 }
 
-/* --- Auth pages nav --------------------------------------- */
+/* ── Auth nav ───────────────────────────────────────────── */
 .auth-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 24px 40px;
-    background: #ffffff;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 40px; background: var(--white);
+    border-bottom: 1px solid var(--border);
 }
-
 .btn-auth-pill {
-    background-color: #3972bf;
-    color: #ffffff;
-    border: none;
-    border-radius: 50px;
-    padding: 12px 30px;
-    font-size: 1rem;
-    font-weight: 600;
-    text-decoration: none;
-    display: inline-block;
-    transition: background-color 0.15s;
+    background: var(--blue); color: var(--white);
+    border: none; border-radius: var(--radius-xl);
+    padding: 10px 28px; font-size: 0.9rem; font-weight: 600;
+    text-decoration: none; display: inline-block;
+    transition: all var(--t); font-family: inherit; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(57,114,191,0.25);
 }
-
 .btn-auth-pill:hover {
-    background-color: #012759;
-    color: #ffffff;
+    background: var(--dark-blue); color: var(--white);
+    transform: translateY(-1px); box-shadow: 0 4px 14px rgba(1,39,89,0.25);
 }
 
-/* --- Logo block ------------------------------------------- */
-.logo-block {
-    text-align: center;
-}
-
+/* ── Logo ───────────────────────────────────────────────── */
+.logo-block { text-align: center; }
 .logo-block .logo-text {
-    font-size: 2.8rem;
-    font-weight: 800;
-    color: #012759;
-    margin: 8px 0 0 0;
-    line-height: 1.1;
+    font-size: 2.8rem; font-weight: 800; color: var(--dark-blue);
+    margin: 10px 0 0; letter-spacing: -0.02em;
 }
-
 .logo-block .logo-slogan {
-    font-size: 0.78rem;
-    letter-spacing: 0.15em;
-    color: #012759;
-    text-transform: uppercase;
-    margin-top: 4px;
+    font-size: 0.72rem; letter-spacing: 0.18em; color: var(--blue);
+    text-transform: uppercase; margin-top: 4px; font-weight: 500;
 }
 
-/* --- Page headings ---------------------------------------- */
+/* ── Page layout ────────────────────────────────────────── */
+.page-content {
+    padding: 36px 48px; max-width: 1100px; margin: 0 auto;
+    animation: fadeUp 0.28s ease both;
+}
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Typography ─────────────────────────────────────────── */
 .page-title {
-    color: #3972bf;
-    font-weight: 800;
-    font-size: 2.4rem;
-    text-align: center;
-    margin-bottom: 8px;
+    color: var(--blue); font-weight: 800; font-size: 2rem;
+    text-align: center; margin-bottom: 6px; letter-spacing: -0.02em;
 }
-
 .page-subtitle {
-    color: #3972bf;
-    font-weight: 700;
-    font-size: 1.5rem;
-    text-align: center;
+    color: var(--dark-blue); font-weight: 700; font-size: 1.25rem;
+    text-align: center; margin-bottom: 4px;
 }
-
 .section-heading {
-    color: #3972bf;
-    font-weight: 700;
-    font-size: 1.3rem;
-    text-align: center;
-    margin-bottom: 16px;
+    color: var(--blue); font-weight: 700; font-size: 1rem;
+    text-align: center; margin-bottom: 16px;
+    text-transform: uppercase; letter-spacing: 0.06em;
 }
 
-/* --- Primary blue pill button ----------------------------- */
+/* ── Buttons ────────────────────────────────────────────── */
 .btn-fitact {
-    background-color: #3972bf;
-    color: #ffffff;
-    border: none;
-    border-radius: 50px;
-    padding: 14px 36px;
-    font-size: 1rem;
-    font-weight: 600;
-    text-decoration: none;
-    display: inline-block;
-    cursor: pointer;
-    transition: background-color 0.15s;
-    width: 100%;
-    text-align: center;
+    background: var(--blue); color: var(--white);
+    border: none; border-radius: var(--radius-xl);
+    padding: 13px 32px; font-size: 0.95rem; font-weight: 600;
+    text-decoration: none; display: inline-block; cursor: pointer;
+    transition: all var(--t); width: 100%; text-align: center;
+    font-family: inherit; box-shadow: 0 2px 8px rgba(57,114,191,0.25);
+    letter-spacing: 0.01em;
 }
-
 .btn-fitact:hover {
-    background-color: #012759;
-    color: #ffffff;
+    background: var(--dark-blue); color: var(--white);
+    transform: translateY(-2px); box-shadow: 0 6px 20px rgba(1,39,89,0.25);
 }
+.btn-fitact:active { transform: translateY(0); }
 
-/* --- Dark pill button ------------------------------------- */
 .btn-dark-pill {
-    background-color: #012759;
-    color: #ffffff;
-    border: none;
-    border-radius: 50px;
-    padding: 14px 36px;
-    font-size: 1.05rem;
-    font-weight: 700;
-    text-decoration: none;
-    display: inline-block;
-    cursor: pointer;
-    transition: background-color 0.15s;
-    text-align: center;
+    background: var(--dark-blue); color: var(--white);
+    border: none; border-radius: var(--radius-xl);
+    padding: 11px 26px; font-size: 0.875rem; font-weight: 600;
+    text-decoration: none; display: inline-block; cursor: pointer;
+    transition: all var(--t); text-align: center; font-family: inherit;
+    box-shadow: 0 2px 8px rgba(1,39,89,0.2); white-space: nowrap;
 }
-
 .btn-dark-pill:hover {
-    background-color: #3972bf;
-    color: #ffffff;
+    background: var(--blue); color: var(--white);
+    transform: translateY(-2px); box-shadow: 0 6px 18px rgba(57,114,191,0.3);
 }
 
-/* --- Cancel button ---------------------------------------- */
-.btn-cancel {
-    background-color: #3972bf;
-    color: #ffffff;
-    border: none;
-    border-radius: 10px;
-    padding: 10px 20px;
-    font-size: 1rem;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.btn-cancel .cancel-x {
-    background: #ffffff;
-    color: #3972bf;
-    border-radius: 4px;
-    width: 26px;
-    height: 26px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 900;
-    font-size: 1rem;
-}
-
-/* --- Back arrow button ------------------------------------ */
+/* ── Back & Cancel ──────────────────────────────────────── */
 .btn-back {
-    background-color: #3972bf;
-    color: #ffffff;
-    border: none;
-    border-radius: 50%;
-    width: 48px;
-    height: 48px;
-    font-size: 1.3rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background-color 0.15s;
+    display: inline-flex; align-items: center; gap: 7px;
+    color: var(--muted); text-decoration: none;
+    font-size: 0.875rem; font-weight: 500;
+    padding: 8px 16px; border-radius: var(--radius-md);
+    border: 1px solid var(--border); background: var(--white);
+    cursor: pointer; transition: all var(--t); font-family: inherit;
+    box-shadow: var(--shadow-sm);
 }
-
 .btn-back:hover {
-    background-color: #012759;
-    color: #ffffff;
+    color: var(--dark-blue); border-color: var(--blue);
+    background: var(--bg); transform: translateX(-2px);
 }
+.btn-back::before { content: '←'; font-size: 1rem; }
 
-/* --- Exercise row ----------------------------------------- */
-.exercise-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 12px;
-    max-width: 420px;
-    margin-left: auto;
-    margin-right: auto;
+.btn-cancel {
+    display: inline-flex; align-items: center; gap: 7px;
+    color: var(--muted); text-decoration: none;
+    font-size: 0.875rem; font-weight: 500;
+    padding: 8px 16px; border-radius: var(--radius-md);
+    border: 1px solid var(--border); background: var(--white);
+    cursor: pointer; transition: all var(--t); font-family: inherit;
+    box-shadow: var(--shadow-sm);
 }
-
-.exercise-btn {
-    background-color: #3972bf;
-    color: #ffffff;
-    border: none;
-    border-radius: 12px 0 0 12px;
-    padding: 14px 24px;
-    font-size: 1rem;
-    font-weight: 600;
-    flex: 1;
-    text-align: center;
-    text-decoration: none;
-    display: block;
+.btn-cancel:hover {
+    color: #e53e3e; border-color: #e53e3e; background: #fff5f5;
 }
+.btn-cancel::before { content: '✕'; font-size: 0.8rem; }
 
-.exercise-info-arrow {
-    background-color: #3972bf;
-    color: #ffffff;
-    border: none;
-    border-radius: 0 12px 12px 0;
-    padding: 14px 16px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    white-space: nowrap;
-}
-
-/* --- Workout list row ------------------------------------- */
-.workout-row {
-    display: flex;
-    align-items: center;
-    margin-bottom: 14px;
-    max-width: 420px;
-    margin-left: auto;
-    margin-right: auto;
-    position: relative;
-}
-
-.workout-row-btn {
-    background-color: #3972bf;
-    color: #ffffff;
-    border: none;
-    border-radius: 12px 0 0 12px;
-    padding: 16px 24px;
-    font-size: 1.05rem;
-    font-weight: 600;
-    flex: 1;
-    text-align: center;
-    text-decoration: none;
-    display: block;
-}
-
-.workout-row-chevron {
-    background-color: #3972bf;
-    color: #ffffff;
-    border: none;
-    border-radius: 0 12px 12px 0;
-    padding: 16px 18px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-}
-
-/* --- Dropdown action menu --------------------------------- */
-.workout-action-menu {
-    position: absolute;
-    right: -120px;
-    top: 0;
-    background-color: #012759;
-    color: #ffffff;
-    border-radius: 16px;
-    padding: 12px 20px;
-    min-width: 110px;
-    text-align: center;
-    z-index: 100;
-    display: none;
-}
-
-.workout-action-menu.show { display: block; }
-
-.workout-action-menu a {
-    display: block;
-    color: #ffffff;
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-weight: 500;
-    padding: 4px 0;
-}
-
-.workout-action-menu a:hover { color: #87ceeb; }
-
-.workout-action-menu hr {
-    border-color: rgba(255,255,255,0.3);
-    margin: 6px 0;
-}
-
-/* --- Auth form inputs ------------------------------------- */
+/* ── Input ──────────────────────────────────────────────── */
 .fitact-input {
-    width: 100%;
-    max-width: 380px;
-    padding: 16px 20px;
-    border: 2px solid #012759;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #012759;
-    background: #ffffff;
-    text-align: center;
-    outline: none;
-    display: block;
-    margin: 0 auto 20px auto;
-    transition: border-color 0.15s;
-}
-
-.fitact-input::placeholder { color: #012759; font-weight: 600; }
-.fitact-input:focus { border-color: #3972bf; }
-
-/* --- Progress bar ----------------------------------------- */
-.fitact-progress {
-    height: 14px;
-    border-radius: 50px;
-    background-color: #87ceeb;
-    overflow: hidden;
-    margin: 0 auto 28px auto;
-    max-width: 600px;
-}
-
-.fitact-progress-bar {
-    height: 100%;
-    background-color: #3972bf;
-    border-radius: 50px;
-    transition: width 0.3s ease;
-}
-
-/* --- Flash alerts ----------------------------------------- */
-.fitact-alert {
-    max-width: 420px;
-    margin: 0 auto 16px auto;
-    padding: 12px 20px;
-    border-radius: 10px;
-    font-weight: 500;
-    text-align: center;
-}
-
-.fitact-alert-danger  { background: #fde8e8; color: #8b0000; border: 1px solid #f5c6c6; }
-.fitact-alert-success { background: #e8f5e9; color: #1b5e20; border: 1px solid #c8e6c9; }
-.fitact-alert-info    { background: #e3f0fb; color: #012759; border: 1px solid #b3d4f0; }
-
-/* --- Sets / Reps inputs ----------------------------------- */
-.sets-reps-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 60px;
-    margin: 20px 0;
-}
-
-.sets-reps-label {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #000000;
-    text-align: center;
-    margin-bottom: 8px;
-}
-
-.sets-reps-input {
-    width: 160px;
-    padding: 14px;
-    border: 2px solid #012759;
-    border-radius: 50px;
-    font-size: 1rem;
-    text-align: center;
-    outline: none;
-    background: #ffffff;
-}
-
-/* --- Progress log card ------------------------------------ */
-.log-card {
-    background-color: #3972bf;
-    color: #ffffff;
-    border-radius: 12px;
-    padding: 18px 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 14px;
-}
-
-.log-card-text p { margin: 4px 0; font-size: 0.95rem; }
-
-.log-card-actions { display: flex; gap: 10px; }
-
-.log-card-icon {
-    width: 36px;
-    height: 36px;
-    background: rgba(255,255,255,0.15);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: #ffffff;
-    font-size: 1rem;
-    border: none;
-    text-decoration: none;
-}
-
-/* --- Account page ----------------------------------------- */
-.account-field-label {
-    color: #3972bf;
-    font-weight: 700;
-    font-size: 1rem;
-    margin-bottom: 6px;
-}
-
-.account-field-box {
-    border: 2px solid #012759;
-    border-radius: 10px;
+    width: 100%; max-width: 400px;
     padding: 14px 20px;
-    font-weight: 600;
-    color: #012759;
-    font-size: 1rem;
+    border: 1.5px solid var(--border); border-radius: var(--radius-md);
+    font-size: 0.95rem; font-weight: 400; color: var(--dark-blue);
+    background: var(--white); outline: none;
+    display: block; margin: 0 auto 16px auto;
+    transition: all var(--t); font-family: inherit; box-shadow: var(--shadow-sm);
+}
+.fitact-input::placeholder { color: #94a3b8; }
+.fitact-input:focus {
+    border-color: var(--blue); box-shadow: 0 0 0 3px rgba(57,114,191,0.12);
 }
 
-.account-divider {
-    border: none;
-    border-top: 3px solid #3972bf;
-    margin: 24px 0;
-    border-radius: 2px;
+/* ── Progress bar ───────────────────────────────────────── */
+.fitact-progress {
+    height: 6px; border-radius: 50px; background: var(--border);
+    overflow: hidden; margin: 0 auto 32px auto; max-width: 560px;
+}
+.fitact-progress-bar {
+    height: 100%; background: linear-gradient(90deg, var(--blue), var(--light-blue));
+    border-radius: 50px; transition: width 0.4s ease;
 }
 
-/* --- Badge card ------------------------------------------- */
+/* ── Flash alerts ───────────────────────────────────────── */
+.fitact-alert {
+    max-width: 480px; margin: 0 auto 14px auto;
+    padding: 12px 18px; border-radius: var(--radius-md);
+    font-weight: 500; font-size: 0.875rem;
+    display: flex; align-items: center; gap: 10px;
+}
+.fitact-alert-danger  { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+.fitact-alert-success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+.fitact-alert-info    { background: #eff6ff; color: var(--dark-blue); border: 1px solid #bfdbfe; }
+
+/* ── Workout list ───────────────────────────────────────── */
+.workout-list { display: flex; flex-direction: column; gap: 10px; max-width: 520px; margin: 0 auto; }
+
+.workout-item {
+    display: flex; align-items: center; background: var(--white);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm); overflow: visible; position: relative;
+    transition: all var(--t);
+}
+.workout-item:hover { box-shadow: var(--shadow-md); border-color: rgba(57,114,191,0.3); }
+
+.workout-item-info { flex: 1; padding: 14px 18px; text-decoration: none; display: block; }
+.workout-item-day { font-size: 0.72rem; color: var(--blue); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 2px; }
+.workout-item-name { font-weight: 600; font-size: 0.95rem; color: var(--dark-blue); display: block; }
+
+.workout-item-btn {
+    background: none; border: none; border-left: 1px solid var(--border);
+    padding: 0 18px; min-height: 52px; cursor: pointer;
+    color: var(--muted); font-size: 1.1rem;
+    transition: all var(--t); display: flex; align-items: center;
+}
+.workout-item-btn:hover { background: var(--bg); color: var(--blue); }
+
+/* ── Action dropdown ────────────────────────────────────── */
+.action-menu {
+    position: absolute; right: 0; top: calc(100% + 6px);
+    background: var(--dark-blue); border-radius: var(--radius-md);
+    padding: 6px; min-width: 140px; z-index: 200;
+    display: none; box-shadow: var(--shadow-lg);
+    animation: menuPop 0.15s ease both;
+}
+@keyframes menuPop {
+    from { opacity: 0; transform: scale(0.95) translateY(-4px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.action-menu.show { display: block; }
+.action-menu a, .action-menu button {
+    display: block; width: 100%; padding: 9px 14px;
+    color: var(--white); text-decoration: none; font-size: 0.875rem;
+    font-weight: 500; border-radius: 6px; border: none;
+    background: none; cursor: pointer; text-align: left;
+    font-family: inherit; transition: background var(--t);
+}
+.action-menu a:hover, .action-menu button:hover { background: rgba(255,255,255,0.12); }
+
+/* ── Exercise list ──────────────────────────────────────── */
+.exercise-list { display: flex; flex-direction: column; gap: 8px; max-width: 500px; margin: 0 auto; }
+
+.exercise-item {
+    display: flex; align-items: center; background: var(--white);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    overflow: hidden; box-shadow: var(--shadow-sm); transition: all var(--t);
+}
+.exercise-item:hover { box-shadow: var(--shadow-md); border-color: rgba(57,114,191,0.25); }
+.exercise-item-left { flex: 1; padding: 13px 18px; }
+.exercise-item-name { font-weight: 600; font-size: 0.9rem; color: var(--dark-blue); display: block; }
+.exercise-item-meta { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+.exercise-item-info {
+    background: rgba(57,114,191,0.06); border-left: 1px solid var(--border);
+    padding: 0 18px; min-height: 52px; display: flex; align-items: center;
+    color: var(--blue); font-size: 0.78rem; font-weight: 600;
+    text-decoration: none; transition: all var(--t); white-space: nowrap;
+}
+.exercise-item-info:hover { background: var(--blue); color: var(--white); }
+
+/* ── Tracking inputs ────────────────────────────────────── */
+.tracking-exercise {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 22px 26px;
+    margin-bottom: 12px; box-shadow: var(--shadow-sm);
+}
+.tracking-exercise-name { font-size: 1rem; font-weight: 700; color: var(--dark-blue); margin-bottom: 3px; }
+.tracking-exercise-target { font-size: 0.8rem; color: var(--muted); margin-bottom: 14px; }
+.tracking-inputs { display: flex; gap: 24px; align-items: flex-end; justify-content: center; flex-wrap: wrap; }
+.tracking-input-group { text-align: center; }
+.tracking-input-label {
+    display: block; font-size: 0.72rem; font-weight: 600;
+    color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px;
+}
+.tracking-input {
+    width: 90px; padding: 12px 8px;
+    border: 1.5px solid var(--border); border-radius: var(--radius-md);
+    font-size: 1.3rem; font-weight: 700; text-align: center;
+    color: var(--dark-blue); background: var(--bg); outline: none;
+    font-family: inherit; transition: all var(--t);
+}
+.tracking-input:focus {
+    border-color: var(--blue); background: var(--white);
+    box-shadow: 0 0 0 3px rgba(57,114,191,0.12);
+}
+
+/* ── Progress log card ──────────────────────────────────── */
+.log-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 18px 22px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px; box-shadow: var(--shadow-sm); transition: box-shadow var(--t);
+}
+.log-card:hover { box-shadow: var(--shadow-md); }
+.log-card-name { font-weight: 700; font-size: 0.95rem; color: var(--dark-blue); margin-bottom: 3px; }
+.log-card-meta { font-size: 0.8rem; color: var(--muted); }
+.log-card-tag {
+    background: rgba(57,114,191,0.08); border-radius: 6px;
+    padding: 3px 10px; font-size: 0.75rem; font-weight: 600;
+    color: var(--blue); margin-top: 5px; display: inline-block;
+}
+.log-card-delete {
+    background: none; border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 7px 12px;
+    color: var(--muted); cursor: pointer; font-size: 0.82rem;
+    transition: all var(--t); font-family: inherit;
+}
+.log-card-delete:hover { border-color: #e53e3e; color: #e53e3e; background: #fff5f5; }
+
+/* ── Account fields ─────────────────────────────────────── */
+.account-field-label {
+    font-size: 0.72rem; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; display: block;
+}
+.account-field-box {
+    border: 1.5px solid var(--border); border-radius: var(--radius-md);
+    padding: 13px 18px; font-weight: 500; color: var(--dark-blue);
+    font-size: 0.95rem; background: var(--white); box-shadow: var(--shadow-sm);
+}
+.account-divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+/* ── Badge cards ────────────────────────────────────────── */
+.badge-grid { display: flex; gap: 16px; flex-wrap: wrap; }
 .badge-card {
-    text-align: center;
-    padding: 12px;
+    text-align: center; padding: 20px 16px; background: var(--white);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    width: 156px; box-shadow: var(--shadow-sm); transition: all var(--t);
 }
-
-.badge-icon {
-    width: 120px;
-    height: 120px;
-    margin: 0 auto 8px auto;
-    background: linear-gradient(145deg, #e8f0fb, #c5d8f5);
-    border-radius: 50%;
-    border: 4px solid #3972bf;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3rem;
+.badge-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.badge-card.earned { border-color: rgba(57,114,191,0.35); }
+.badge-icon-wrap {
+    width: 72px; height: 72px; border-radius: 50%;
+    margin: 0 auto 12px; display: flex; align-items: center;
+    justify-content: center; font-size: 2rem;
+    background: rgba(57,114,191,0.08); border: 2px solid rgba(57,114,191,0.2);
 }
-
+.badge-card.locked .badge-icon-wrap { background: #f5f5f5; border-color: #e2e2e2; opacity: 0.5; }
 .badge-title {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #012759;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-size: 0.75rem; font-weight: 700; color: var(--dark-blue);
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;
 }
+.badge-date { font-size: 0.7rem; color: var(--blue); font-weight: 500; }
+.badge-locked-text { font-size: 0.7rem; color: #bbb; }
 
-/* --- Questionnaire choice buttons ------------------------- */
+/* ── Questionnaire choices ──────────────────────────────── */
 .choice-btn {
-    display: block;
-    width: 100%;
-    max-width: 320px;
-    margin: 0 auto 14px auto;
-    padding: 16px;
-    background-color: #3972bf;
-    color: #ffffff;
-    border: none;
-    border-radius: 10px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    transition: background-color 0.15s;
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; max-width: 380px; margin: 0 auto 10px auto;
+    padding: 15px 20px; background: var(--white); color: var(--dark-blue);
+    border: 1.5px solid var(--border); border-radius: var(--radius-md);
+    font-size: 0.95rem; font-weight: 500; cursor: pointer;
+    transition: all var(--t); font-family: inherit; box-shadow: var(--shadow-sm);
 }
-
-.choice-btn:hover,
+.choice-btn::after { content: '→'; color: #cbd5e1; transition: color var(--t); }
+.choice-btn:hover {
+    border-color: var(--blue); background: rgba(57,114,191,0.04);
+    transform: translateX(4px); box-shadow: var(--shadow-md);
+}
+.choice-btn:hover::after { color: var(--blue); }
 .choice-btn.selected {
-    background-color: #012759;
+    border-color: var(--blue); background: rgba(57,114,191,0.09);
+    color: var(--blue); font-weight: 600;
+}
+.choice-btn.selected::after { content: '✓'; color: var(--blue); font-weight: 700; }
+
+/* ── Stat card ──────────────────────────────────────────── */
+.stat-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 24px;
+    text-align: center; box-shadow: var(--shadow-sm);
+}
+.stat-number {
+    font-size: 3.2rem; font-weight: 800; color: var(--dark-blue);
+    letter-spacing: -0.03em; line-height: 1;
+}
+.stat-label {
+    font-size: 0.75rem; color: var(--muted); font-weight: 600;
+    margin-top: 6px; text-transform: uppercase; letter-spacing: 0.08em;
 }
 
-/* --- Utility --------------------------------------------- */
-.text-fitact-blue  { color: #3972bf; }
-.text-fitact-dark  { color: #012759; }
-.text-center       { text-align: center; }
-.mt-1 { margin-top: 8px; }
-.mt-2 { margin-top: 16px; }
-.mt-3 { margin-top: 24px; }
-.mt-4 { margin-top: 32px; }
-.mb-1 { margin-bottom: 8px; }
-.mb-2 { margin-bottom: 16px; }
-.mb-3 { margin-bottom: 24px; }
-.mb-4 { margin-bottom: 32px; }
-.page-content { padding: 32px 40px; }
+/* ── Programme card ─────────────────────────────────────── */
+.programme-card {
+    background: linear-gradient(135deg, var(--dark-blue) 0%, #1a3a6e 100%);
+    border-radius: var(--radius-lg); padding: 26px 32px;
+    color: var(--white); text-align: center;
+    box-shadow: 0 8px 24px rgba(1,39,89,0.25); margin-bottom: 28px;
+}
+.programme-card-label {
+    font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.12em; opacity: 0.65; margin-bottom: 8px;
+}
+.programme-card-name { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; }
+
+/* ── Muscle group label ─────────────────────────────────── */
+.muscle-group-label {
+    font-size: 0.7rem; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    margin: 20px 0 8px; padding-left: 2px;
+}
+
+/* ── Custom checkbox ────────────────────────────────────── */
+.ex-checkbox-label {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; background: var(--white);
+    border: 1.5px solid var(--border); border-radius: var(--radius-md);
+    cursor: pointer; transition: all var(--t); margin-bottom: 8px;
+    font-weight: 500; font-size: 0.9rem; color: var(--dark-blue);
+}
+.ex-checkbox-label:hover { border-color: var(--blue); background: rgba(57,114,191,0.04); }
+.ex-checkbox-label.checked {
+    border-color: var(--blue); background: rgba(57,114,191,0.08);
+    color: var(--blue); font-weight: 600;
+}
+.ex-custom-check {
+    width: 20px; height: 20px; border: 2px solid var(--border);
+    border-radius: 5px; display: flex; align-items: center;
+    justify-content: center; flex-shrink: 0; transition: all var(--t);
+    font-size: 0.75rem; color: var(--white);
+}
+.ex-checkbox-label.checked .ex-custom-check { background: var(--blue); border-color: var(--blue); }
+
+/* ── Divider ────────────────────────────────────────────── */
+.section-divider {
+    display: flex; align-items: center; gap: 16px; margin: 28px 0;
+}
+.section-divider-line { flex: 1; height: 1px; background: var(--border); }
+.section-divider-text {
+    font-size: 0.72rem; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap;
+}
+
+/* ── Utility ────────────────────────────────────────────── */
+.text-blue { color: var(--blue); }
+.text-dark { color: var(--dark-blue); }
+.text-muted { color: var(--muted); }
+.text-center { text-align: center; }
+.text-fitact-blue { color: var(--blue); }
+.text-fitact-dark { color: var(--dark-blue); }
+.mt-1{margin-top:8px}.mt-2{margin-top:16px}.mt-3{margin-top:24px}.mt-4{margin-top:32px}
+.mb-1{margin-bottom:8px}.mb-2{margin-bottom:16px}.mb-3{margin-bottom:24px}.mb-4{margin-bottom:32px}

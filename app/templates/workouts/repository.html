@@ -3,29 +3,35 @@
 {% block content %}
 <div class="page-content">
 
-    <h1 class="page-title">Workouts repository</h1>
-    <h2 class="section-heading" style="margin-top:8px;">Workouts</h2>
+    {% if from_change %}
+    <div style="margin-bottom:20px;">
+        <a href="{{ url_for('workouts.change_workout') }}" class="btn-back">Back to change workout</a>
+    </div>
+    {% endif %}
 
-    <div style="max-width:520px; margin:24px auto 0;">
+    <h1 class="page-title">Workouts repository</h1>
+    <p style="text-align:center; color:var(--muted); font-size:0.875rem; margin-bottom:28px;">
+        Browse all ready-made workouts. Click a workout to view exercises, then start or save it.
+    </p>
+
+    <div class="workout-list">
         {% for workout in workouts %}
-        <div class="workout-row" style="margin-bottom:14px;">
-            <a href="{{ url_for('workouts.workout_info', workout_id=workout.id) }}"
-               class="workout-row-btn" style="text-decoration:none; display:block; border-radius:12px 0 0 12px; padding:16px 24px;">
-                {{ workout.name }}
+        <div class="workout-item">
+            <a href="{{ url_for('workouts.workout_info', workout_id=workout.id) }}" class="workout-item-info" style="text-decoration:none;">
+                <span class="workout-item-day">{{ workout.type }}</span>
+                <span class="workout-item-name">{{ workout.name }}</span>
             </a>
-            <button class="workout-row-chevron" onclick="toggleMenu(this)">&#8250;</button>
-            <div class="workout-action-menu">
-                <a href="{{ url_for('workouts.start_from_repository', workout_id=workout.id) }}">Start</a>
-                <hr>
+            <button class="workout-item-btn" onclick="toggleMenu(this)" aria-label="Actions">&#8942;</button>
+            <div class="action-menu">
+                <a href="{{ url_for('workouts.start_from_repository', workout_id=workout.id) }}">▶ Start</a>
                 <form method="POST" action="{{ url_for('workouts.save_workout', workout_id=workout.id) }}" style="margin:0;">
                     {% if workout.id in saved_ids %}
-                        <span style="color:#87ceeb; font-size:0.85rem;">Saved ✓</span>
+                        <button type="button" style="opacity:0.5; cursor:default;">★ Saved</button>
                     {% else %}
-                        <button type="submit" style="background:none;border:none;color:#fff;cursor:pointer;font-size:0.9rem;padding:4px 0;">Save</button>
+                        <button type="submit">★ Save</button>
                     {% endif %}
                 </form>
-                <hr>
-                <a href="{{ url_for('workouts.workout_info', workout_id=workout.id) }}">Info</a>
+                <a href="{{ url_for('workouts.workout_info', workout_id=workout.id) }}">ℹ Info</a>
             </div>
         </div>
         {% endfor %}
@@ -38,16 +44,14 @@
 <script>
 function toggleMenu(btn) {
     var menu = btn.nextElementSibling;
-    document.querySelectorAll('.workout-action-menu.show').forEach(function(m) {
+    document.querySelectorAll('.action-menu.show').forEach(function(m) {
         if (m !== menu) m.classList.remove('show');
     });
     menu.classList.toggle('show');
 }
 document.addEventListener('click', function(e) {
-    if (!e.target.classList.contains('workout-row-chevron')) {
-        document.querySelectorAll('.workout-action-menu.show').forEach(function(m) {
-            m.classList.remove('show');
-        });
+    if (!e.target.classList.contains('workout-item-btn')) {
+        document.querySelectorAll('.action-menu.show').forEach(function(m) { m.classList.remove('show'); });
     }
 });
 </script>

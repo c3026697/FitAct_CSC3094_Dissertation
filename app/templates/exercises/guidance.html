@@ -1,26 +1,39 @@
 {% extends 'base.html' %}
 {% block title %}{{ exercise.name }} – FitAct{% endblock %}
 {% block content %}
-<div class="page-content" style="max-width:640px; margin:0 auto;">
+<div class="page-content" style="max-width:640px;">
 
     <div style="margin-bottom:24px;">
-        <a href="javascript:history.back()" class="btn-back">&#8592;</a>
+        <a href="javascript:history.back()" class="btn-back">Back</a>
     </div>
 
     <h1 class="page-title">{{ exercise.name }}</h1>
-    <p class="section-heading">Exercise Guidance:</p>
 
-    <div style="margin-top:24px; background:#f4f7fb; border-radius:14px; padding:28px 32px;">
-        <p style="color:#012759; font-size:1rem; line-height:1.8; font-weight:500;">
-            {{ exercise.guidance_text }}
-        </p>
+    <div style="text-align:center; margin-bottom:28px;">
+        <span style="background:rgba(57,114,191,0.1); color:var(--blue);
+                     border-radius:20px; padding:6px 18px; font-size:0.82rem;
+                     font-weight:600; text-transform:uppercase; letter-spacing:0.06em;">
+            {{ exercise.muscle_group }}
+        </span>
     </div>
 
-    <div style="margin-top:20px; text-align:center;">
-        <span style="display:inline-block; background:#3972bf; color:#fff;
-                     border-radius:8px; padding:8px 20px; font-size:0.9rem; font-weight:600;">
-            Muscle group: {{ exercise.muscle_group }}
-        </span>
+    <div style="background:var(--white); border:1px solid var(--border);
+                border-radius:var(--radius-lg); padding:28px 32px;
+                box-shadow:var(--shadow-sm);">
+        <p style="font-size:0.82rem; font-weight:600; color:var(--muted);
+                   text-transform:uppercase; letter-spacing:0.06em; margin-bottom:14px;">
+            How to perform
+        </p>
+        <ul style="padding-left:20px; margin:0;">
+            {% for sentence in exercise.guidance_text.split('. ') %}
+                {% if sentence.strip() %}
+                <li style="color:var(--dark-blue); font-size:0.95rem; line-height:1.8;
+                           margin-bottom:6px; font-weight:400;">
+                    {{ sentence.strip().rstrip('.') }}.
+                </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
     </div>
 
 </div>

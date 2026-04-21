@@ -5,36 +5,128 @@
 
     <h1 class="page-title">Progress</h1>
 
-    <h2 class="section-heading" style="margin-top:16px;">Completed Workouts</h2>
-    <p class="text-center" style="font-size:2.5rem; font-weight:800; color:#000000; margin:8px 0 32px;">
-        {{ logs|length }}
-    </p>
+    <!-- Stats -->
+    <div style="max-width:520px; margin:24px auto 36px; display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+        <div class="stat-card">
+            <div class="stat-number">{{ logs|length }}</div>
+            <div class="stat-label">Workouts completed</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">
+                {% set total = namespace(count=0) %}
+                {% for log in logs %}{% set total.count = total.count + log.logged_exercises|length %}{% endfor %}
+                {{ total.count }}
+            </div>
+            <div class="stat-label">Sets logged</div>
+        </div>
+    </div>
 
-    <h2 class="section-heading">Past Workouts</h2>
+    <p class="section-heading">Past workouts</p>
 
-    <div style="max-width:700px; margin:24px auto 0;">
+    <div style="max-width:700px; margin:0 auto;">
         {% if logs %}
             {% for log in logs %}
-            <div class="log-card">
-                <div class="log-card-text">
-                    <p><strong>{{ log.workout.name }}</strong></p>
-                    <p>Date: {{ log.completed_at.strftime('%d %b %Y, %H:%M') }}</p>
-                    <p>Exercises logged: {{ log.logged_exercises|length }}</p>
+            <div class="log-card" style="flex-direction:column; align-items:stretch; padding:0; overflow:hidden;">
+
+                <!-- Summary row -->
+                <div style="display:flex; align-items:center; padding:18px 22px;">
+                    <div style="flex:1;">
+                        <div class="log-card-name">{{ log.workout.name }}</div>
+                        <div class="log-card-meta">
+                            {{ log.completed_at.strftime('%d %b %Y · %H:%M') }}
+                            {% if log.duration_seconds %}
+                              · {{ (log.duration_seconds // 60) }}m {{ (log.duration_seconds % 60) }}s
+                            {% endif %}
+                        </div>
+                        <span class="log-card-tag">{{ log.logged_exercises|length }} sets logged</span>
+                    </div>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <button type="button"
+                                onclick="toggleDetail('detail-{{ log.id }}')"
+                                style="background:none; border:1px solid var(--border); border-radius:8px;
+                                       padding:7px 14px; font-size:0.82rem; font-weight:600;
+                                       color:var(--blue); cursor:pointer; font-family:inherit;">
+                            Details
+                        </button>
+                        <form method="POST" action="{{ url_for('progress.delete_log', log_id=log.id) }}">
+                            <button type="submit" class="log-card-delete"
+                                    onclick="return confirm('Delete this log?')">Delete</button>
+                        </form>
+                    </div>
                 </div>
-                <div class="log-card-actions">
-                    <form method="POST" action="{{ url_for('progress.delete_log', log_id=log.id) }}">
-                        <button type="submit" class="log-card-icon"
-                                onclick="return confirm('Delete this log?')" title="Delete">&#10005;</button>
-                    </form>
+
+                <!-- Expandable detail -->
+                <div id="detail-{{ log.id }}"
+                     style="display:none; border-top:1px solid var(--border);
+                            background:var(--bg); padding:16px 22px;">
+                    {% set grouped = namespace(last='') %}
+                    {% for le in log.logged_exercises %}
+                    {% if le.exercise.name != grouped.last %}
+                        {% if not loop.first %}</ul>{% endif %}
+                        <div style="font-size:0.82rem; font-weight:700; color:var(--dark-blue); margin:10px 0 4px;">{{ le.exercise.name }}</div>
+                        <ul style="margin:0; padding-left:18px; font-size:0.82rem; color:var(--muted);">
+                        {% set grouped.last = le.exercise.name %}
+                    {% endif %}
+                    <li>
+                        Set {{ le.sets_completed }}:
+                        {{ le.reps_completed }} reps
+                        {% if le.weight_kg %} @ {{ le.weight_kg }}kg{% endif %}
+                    </li>
+                    {% endfor %}
+                    {% if log.logged_exercises %}</ul>{% endif %}
                 </div>
+
             </div>
             {% endfor %}
         {% else %}
-            <p class="text-center text-fitact-dark" style="margin-top:40px;">
-                No workouts logged yet. Complete your first workout to see it here.
-            </p>
+            <div style="text-align:center; padding:60px 20px;">
+                <div style="font-size:3rem; margin-bottom:16px;">📊</div>
+                <p style="color:var(--muted);">No workouts logged yet. Complete your first workout to see it here.</p>
+            </div>
         {% endif %}
     </div>
 
 </div>
+
+<!-- Badge earned popup -->
+{% if session.get('new_badge_title') %}
+<div id="badge-popup"
+     style="position:fixed; inset:0; background:rgba(1,39,89,0.55);
+            display:flex; align-items:center; justify-content:center; z-index:9999;">
+    <div style="background:var(--white); border-radius:24px; padding:40px 48px;
+                max-width:400px; width:90%; text-align:center; box-shadow:var(--shadow-lg);
+                animation:fadeUp 0.3s ease both;">
+        <div style="font-size:4rem; margin-bottom:12px;">🏆</div>
+        <h2 style="font-size:1.4rem; font-weight:800; color:var(--dark-blue); margin-bottom:8px;">
+            Badge Earned!
+        </h2>
+        <h3 style="font-size:1.1rem; font-weight:700; color:var(--blue); margin-bottom:12px;">
+            {{ session.get('new_badge_title') }}
+        </h3>
+        <p style="color:var(--muted); font-size:0.9rem; margin-bottom:28px;">
+            Congratulations on completing your first workout on FitAct!<br>
+            {{ session.get('new_badge_description') }}
+        </p>
+        <button onclick="document.getElementById('badge-popup').remove()"
+                class="btn-fitact" style="max-width:180px; display:inline-block;">
+            Continue
+        </button>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleDetail(id) {
+    var el = document.getElementById(id);
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+// Clear badge session after showing popup
+{% if session.get('new_badge_title') %}
+fetch('/clear-badge-session', {method:'POST'});
+{% endif %}
+</script>
 {% endblock %}

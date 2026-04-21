@@ -3,43 +3,61 @@
 {% block content %}
 <div class="page-content">
 
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+    <div style="display:flex; justify-content:space-between; align-items:center;
+                margin-bottom:28px; flex-wrap:wrap; gap:12px;">
         <a href="{{ url_for('programme.my_programme') }}" class="btn-dark-pill">My Programme</a>
         <h1 class="page-title" style="margin:0; flex:1; text-align:center;">Workout</h1>
-        <a href="{{ url_for('workouts.change_workout') }}" class="btn-dark-pill">Change today's workout</a>
+        <a href="{{ url_for('workouts.change_workout') }}" class="btn-dark-pill">Change workout</a>
     </div>
 
     {% if workout %}
-        <h2 class="page-subtitle">{{ workout.name }}</h2>
-        <p class="section-heading" style="margin-top:16px;">Exercises</p>
+        <div class="programme-card" style="max-width:520px; margin:0 auto 28px;">
+            <div class="programme-card-label">Today's workout</div>
+            <div class="programme-card-name">{{ workout.name }}</div>
+            {% if programme %}
+            <div style="font-size:0.78rem; opacity:0.6; margin-top:6px;">{{ programme.name }}</div>
+            {% endif %}
+        </div>
 
         {% if exercises %}
-            <a href="{{ url_for('tracking.execute', workout_id=workout.id) }}"
-               class="btn-fitact" style="max-width:220px; margin:0 auto 28px; display:block;">
-               Start Workout
-            </a>
+            <div style="text-align:center; margin-bottom:24px;">
+                <a href="{{ url_for('tracking.execute', workout_id=workout.id) }}"
+                   class="btn-fitact" style="max-width:200px; display:inline-block; width:auto; padding:13px 40px;">
+                   Start Workout
+                </a>
+            </div>
 
-            <div style="max-width:480px; margin:0 auto;">
+            <p class="section-heading">Exercises</p>
+
+            <div class="exercise-list">
                 {% for we in exercises %}
-                <div class="exercise-row">
-                    <span class="exercise-btn">{{ we.exercise.name }}</span>
+                <div class="exercise-item">
+                    <div class="exercise-item-left">
+                        <span class="exercise-item-name">{{ we.exercise.name }}</span>
+                        <span class="exercise-item-meta">
+                            {{ we.sets_target }} sets · {{ we.reps_target }} reps · {{ we.exercise.muscle_group }}
+                        </span>
+                    </div>
+                    <!-- White background info link -->
                     <a href="{{ url_for('exercises.guidance', exercise_id=we.exercise.id) }}"
-                       class="exercise-info-arrow">info &#8250;</a>
+                       style="background:var(--white); border-left:1px solid var(--border);
+                              padding:0 18px; min-height:52px; display:flex; align-items:center;
+                              color:var(--blue); font-size:0.78rem; font-weight:600;
+                              text-decoration:none; transition:all var(--t); white-space:nowrap;">
+                        Info →
+                    </a>
                 </div>
-                <p style="text-align:center; color:#012759; font-size:0.85rem; margin:-6px 0 10px;">
-                    {{ we.sets_target }} sets &times; {{ we.reps_target }} reps
-                </p>
                 {% endfor %}
             </div>
-        {% else %}
-            <p class="text-center text-fitact-dark">No exercises found for this workout.</p>
         {% endif %}
 
     {% else %}
-        <div style="text-align:center; margin-top:60px;">
-            <p style="color:#012759;">No workout assigned yet.</p>
-            <a href="{{ url_for('questionnaire.questionnaire') }}" class="btn-fitact" style="max-width:260px; margin-top:20px;">
-                Get my recommended programme
+        <div style="text-align:center; padding:60px 20px;">
+            <div style="font-size:3rem; margin-bottom:16px;">🏋️</div>
+            <p style="color:var(--muted); margin-bottom:20px;">No workout assigned yet.</p>
+            <a href="{{ url_for('questionnaire.questionnaire') }}"
+               class="btn-fitact" style="max-width:240px; display:inline-block;">
+               Get my programme
             </a>
         </div>
     {% endif %}

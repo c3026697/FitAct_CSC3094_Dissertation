@@ -1,21 +1,21 @@
 {% extends 'base.html' %}
-{% block title %}Create Custom Workout – FitAct{% endblock %}
+{% block title %}Edit Workout – FitAct{% endblock %}
 {% block content %}
 <div class="page-content" style="max-width:580px;">
 
     <div style="margin-bottom:24px;">
-        <a href="{{ url_for('workouts.change_workout') }}" class="btn-back">Back</a>
+        <a href="{{ url_for('workouts.saved') }}" class="btn-back">Back</a>
     </div>
 
-    <h1 class="page-title">Create Custom Workout</h1>
+    <h1 class="page-title">Edit Workout</h1>
 
-    <form method="POST" action="{{ url_for('workouts.create_custom') }}">
+    <form method="POST" action="{{ url_for('workouts.edit_custom', workout_id=workout.id) }}">
 
         <div style="margin:24px 0 28px;">
             <label class="account-field-label" style="text-align:center; display:block; margin-bottom:8px;">Workout name</label>
             <input type="text" name="workout_name" class="fitact-input"
                    style="max-width:100%; text-align:left; padding-left:16px;"
-                   placeholder="e.g. My Push Day" required>
+                   value="{{ workout.name }}" required>
         </div>
 
         <p class="section-heading">Select exercises</p>
@@ -32,19 +32,27 @@
                           border-radius:var(--radius-md); cursor:pointer; margin-bottom:8px;
                           transition:all var(--t);" class="ex-card-label">
                 <input type="checkbox" name="exercise_ids" value="{{ exercise.id }}"
-                       class="ex-hidden-cb" style="display:none;">
+                       class="ex-hidden-cb"
+                       {% if exercise.id in current_ids %}checked{% endif %}
+                       style="display:none;">
                 <div class="ex-custom-box"
                      style="width:20px; height:20px; border:2px solid var(--border);
                             border-radius:5px; flex-shrink:0; display:flex; align-items:center;
                             justify-content:center; font-size:0.75rem; color:var(--white);
-                            background:var(--white); transition:all var(--t);"></div>
-                <span style="font-size:0.9rem; font-weight:500; color:var(--dark-blue);">{{ exercise.name }}</span>
+                            background:{% if exercise.id in current_ids %}var(--blue){% else %}var(--white){% endif %};
+                            border-color:{% if exercise.id in current_ids %}var(--blue){% else %}var(--border){% endif %};">
+                    {% if exercise.id in current_ids %}✓{% endif %}
+                </div>
+                <span style="font-size:0.9rem; font-weight:{% if exercise.id in current_ids %}600{% else %}500{% endif %};
+                             color:{% if exercise.id in current_ids %}var(--blue){% else %}var(--dark-blue){% endif %};">
+                    {{ exercise.name }}
+                </span>
             </label>
         {% endfor %}
 
         <div style="margin-top:28px; text-align:center; padding-bottom:32px;">
             <button type="submit" class="btn-fitact" style="max-width:220px; display:inline-block;">
-                Save workout
+                Save changes
             </button>
         </div>
     </form>

@@ -50,3 +50,20 @@ def change_programme():
 
     return render_template('programme/change_programme.html',
                            all_programmes=all_programmes)
+
+@programme_bp.route('/programme/preview/<int:programme_id>')
+@login_required
+def programme_preview(programme_id):
+    programme = Programme.query.get_or_404(programme_id)
+    return render_template('programme/programme_preview.html', programme=programme)
+
+
+@programme_bp.route('/programme/preview/<int:programme_id>/workout/<int:workout_id>')
+@login_required
+def workout_preview(programme_id, workout_id):
+    from app.models import Workout, WorkoutExercise
+    workout = Workout.query.get_or_404(workout_id)
+    exercises = WorkoutExercise.query.filter_by(workout_id=workout.id)\
+                .order_by(WorkoutExercise.exercise_order).all()
+    return render_template('programme/workout_preview.html',
+                           workout=workout, exercises=exercises, programme_id=programme_id)

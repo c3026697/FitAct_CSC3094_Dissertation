@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session
 from flask_login import login_required, current_user
 from datetime import datetime
 from app.extensions import db
@@ -21,6 +21,8 @@ def award_first_workout_badge(user):
                     user_id=user.id, achievement_id=achievement.id
                 ))
                 db.session.commit()
+                return achievement   # return badge so we can show popup
+    return None
 
 
 @tracking_bp.route('/workout/<int:workout_id>/execute')
@@ -47,23 +49,51 @@ def log_workout(workout_id):
         .all()
     )
 
-    log = WorkoutLog(user_id=current_user.id, workout_id=workout.id,
-                     completed_at=datetime.utcnow())
+    duration = request.form.get('duration_seconds', None)
+    log = WorkoutLog(
+        user_id=current_user.id,
+        workout_id=workout.id,
+        completed_at=datetime.utcnow(),
+        duration_seconds=int(duration) if duration else None
+    )
     db.session.add(log)
     db.session.flush()
 
     for we in exercises:
-        sets_done = int(request.form.get(f'sets_{we.id}', we.sets_target) or we.sets_target)
-        reps_done = int(request.form.get(f'reps_{we.id}', we.reps_target) or we.reps_target)
-        db.session.add(LoggedExercise(
-            log_id=log.id,
-            workout_exercise_id=we.id,
-            exercise_id=we.exercise_id,
-            sets_completed=sets_done,
-            reps_completed=reps_done
-        ))
+        # Per-set tracking: collect set_1_reps, set_1_weight etc.
+        set_num = 1
+        while request.form.get(f'ex_{we.id}_set_{set_num}_reps'):
+            reps = int(request.form.get(f'ex_{we.id}_set_{set_num}_reps', 0) or 0)
+            weight = request.form.get(f'ex_{we.id}_set_{set_num}_weight', None)
+            db.session.add(LoggedExercise(
+                log_id=log.id,
+                workout_exercise_id=we.id,
+                exercise_id=we.exercise_id,
+                sets_completed=set_num,
+                reps_completed=reps,
+                weight_kg=float(weight) if weight else None
+            ))
+            set_num += 1
+
+        # Fallback: if no per-set data, log a single summary row
+        if set_num == 1:
+            sets_done = int(request.form.get(f'sets_{we.id}', we.sets_target) or we.sets_target)
+            reps_done = int(request.form.get(f'reps_{we.id}', we.reps_target) or we.reps_target)
+            db.session.add(LoggedExercise(
+                log_id=log.id,
+                workout_exercise_id=we.id,
+                exercise_id=we.exercise_id,
+                sets_completed=sets_done,
+                reps_completed=reps_done,
+                weight_kg=None
+            ))
 
     db.session.commit()
-    award_first_workout_badge(current_user)
+
+    badge = award_first_workout_badge(current_user)
+    if badge:
+        session['new_badge_title'] = badge.title
+        session['new_badge_description'] = badge.description
+
     flash('Workout logged!', 'success')
     return redirect(url_for('progress.progress'))

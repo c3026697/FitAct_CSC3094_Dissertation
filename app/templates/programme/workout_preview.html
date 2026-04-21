@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}{{ workout.name }} – FitAct{% endblock %}
+{% block content %}
+<div class="page-content" style="max-width:560px;">
+
+    <div style="margin-bottom:24px;">
+        <a href="{{ url_for('programme.programme_preview', programme_id=programme_id) }}" class="btn-back">Back</a>
+    </div>
+
+    <h1 class="page-title">{{ workout.name }}</h1>
+    <p style="text-align:center; color:var(--muted); font-size:0.875rem; margin-bottom:28px;">
+        {{ workout.type }} · {{ exercises|length }} exercises
+    </p>
+
+    <div class="exercise-list">
+        {% for we in exercises %}
+        <div class="exercise-item">
+            <div class="exercise-item-left">
+                <span class="exercise-item-name">{{ we.exercise.name }}</span>
+                <span class="exercise-item-meta">{{ we.sets_target }} sets · {{ we.reps_target }} reps · {{ we.exercise.muscle_group }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
