@@ -7,11 +7,13 @@ workouts_bp = Blueprint('workouts', __name__)
 
 
 def get_todays_workout():
-    if not current_user.current_programme_id:
+    from app.models import User
+    user = User.query.get(current_user.id)
+    if not user.current_programme_id:
         return None
     programme_workouts = (
         ProgrammeWorkout.query
-        .filter_by(programme_id=current_user.current_programme_id)
+        .filter_by(programme_id=user.current_programme_id)
         .order_by(ProgrammeWorkout.day_number)
         .all()
     )

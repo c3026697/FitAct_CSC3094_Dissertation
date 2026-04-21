@@ -1,6 +1,50 @@
 {% extends 'base.html' %}
-{% block title %}Home{% endblock %}
+{% block title %}My Account – FitAct{% endblock %}
 {% block content %}
-<h2>Home</h2>
-<p class="text-muted">Coming Tuesday.</p>
+<div class="page-content">
+
+    <h1 class="page-title">Your Account</h1>
+
+    <!-- Email + Password row -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:48px;
+                max-width:900px; margin:32px auto 0; padding:0 20px;">
+        <div>
+            <p class="account-field-label">Email</p>
+            <div class="account-field-box">{{ current_user.email }}</div>
+        </div>
+        <div>
+            <p class="account-field-label">Password</p>
+            <div class="account-field-box">••••••••</div>
+        </div>
+    </div>
+
+    <!-- Blue divider -->
+    <div style="max-width:900px; margin:28px auto; padding:0 20px;">
+        <hr class="account-divider">
+    </div>
+
+    <!-- Programme row -->
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;
+                max-width:900px; margin:0 auto; padding:0 20px; flex-wrap:wrap; gap:24px;">
+        <div>
+            <p class="account-field-label">Your Recommended Programme</p>
+            <div class="account-field-box" style="min-width:240px;">
+                {% if current_user.current_programme %}
+                    {{ current_user.current_programme.name }}
+                {% else %}
+                    No programme allocated yet
+                {% endif %}
+            </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:14px; align-items:flex-end;">
+            <a href="{{ url_for('programme.change_programme') }}" class="btn-dark-pill">
+                Manually Change Programme
+            </a>
+            <a href="{{ url_for('questionnaire.questionnaire') }}" class="btn-dark-pill">
+                Recommend a new programme
+            </a>
+        </div>
+    </div>
+
+</div>
 {% endblock %}
