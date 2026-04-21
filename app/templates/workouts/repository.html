@@ -3,35 +3,54 @@
 {% block content %}
 <div class="page-content">
 
+    <!-- Breadcrumb -->
+    <nav style="display:flex; align-items:center; gap:8px; font-size:0.8rem;
+                color:var(--muted); margin-bottom:20px; flex-wrap:wrap;">
+        <a href="{{ url_for('workouts.workout_page') }}"
+           style="color:var(--muted); text-decoration:none;">Workout</a>
+        <span>›</span>
+        {% if from_change %}
+            <a href="{{ url_for('workouts.change_workout') }}"
+               style="color:var(--muted); text-decoration:none;">Change Workout</a>
+            <span>›</span>
+        {% endif %}
+        <span style="color:var(--dark-blue); font-weight:600;">Workouts Repository</span>
+    </nav>
+
     {% if from_change %}
     <div style="margin-bottom:20px;">
-        <a href="{{ url_for('workouts.change_workout') }}" class="btn-back">Back to change workout</a>
+        <a href="{{ url_for('workouts.change_workout') }}" class="btn-back">
+            Back to change workout
+        </a>
     </div>
     {% endif %}
 
     <h1 class="page-title">Workouts repository</h1>
     <p style="text-align:center; color:var(--muted); font-size:0.875rem; margin-bottom:28px;">
-        Browse all ready-made workouts. Click a workout to view exercises, then start or save it.
+        Browse all ready-made workouts. Click a workout to view details, then start or save it.
     </p>
 
     <div class="workout-list">
         {% for workout in workouts %}
         <div class="workout-item">
-            <a href="{{ url_for('workouts.workout_info', workout_id=workout.id) }}" class="workout-item-info" style="text-decoration:none;">
+            <a href="{{ url_for('workouts.workout_info', workout_id=workout.id) }}{% if from_change %}?from_change=1{% endif %}"
+               class="workout-item-info" style="text-decoration:none;">
                 <span class="workout-item-day">{{ workout.type }}</span>
                 <span class="workout-item-name">{{ workout.name }}</span>
             </a>
             <button class="workout-item-btn" onclick="toggleMenu(this)" aria-label="Actions">&#8942;</button>
             <div class="action-menu">
                 <a href="{{ url_for('workouts.start_from_repository', workout_id=workout.id) }}">▶ Start</a>
-                <form method="POST" action="{{ url_for('workouts.save_workout', workout_id=workout.id) }}" style="margin:0;">
+                <form method="POST"
+                      action="{{ url_for('workouts.save_workout', workout_id=workout.id) }}"
+                      style="margin:0;">
                     {% if workout.id in saved_ids %}
                         <button type="button" style="opacity:0.5; cursor:default;">★ Saved</button>
                     {% else %}
                         <button type="submit">★ Save</button>
                     {% endif %}
                 </form>
-                <a href="{{ url_for('workouts.workout_info', workout_id=workout.id) }}">ℹ Info</a>
+                <a href="{{ url_for('workouts.workout_info', workout_id=workout.id) }}{% if from_change %}?from_change=1{% endif %}">ℹ Info</a>
             </div>
         </div>
         {% endfor %}
@@ -51,7 +70,9 @@ function toggleMenu(btn) {
 }
 document.addEventListener('click', function(e) {
     if (!e.target.classList.contains('workout-item-btn')) {
-        document.querySelectorAll('.action-menu.show').forEach(function(m) { m.classList.remove('show'); });
+        document.querySelectorAll('.action-menu.show').forEach(function(m) {
+            m.classList.remove('show');
+        });
     }
 });
 </script>

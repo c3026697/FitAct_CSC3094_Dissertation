@@ -3,6 +3,26 @@
 {% block content %}
 <div class="page-content" style="max-width:600px;">
 
+    <!-- Breadcrumb -->
+    <nav style="display:flex; align-items:center; gap:8px; font-size:0.8rem;
+                color:var(--muted); margin-bottom:20px; flex-wrap:wrap;">
+        <a href="{{ url_for('workouts.workout_page') }}"
+           style="color:var(--muted); text-decoration:none;">Workout</a>
+        <span>›</span>
+        {% if from_change %}
+            <a href="{{ url_for('workouts.change_workout') }}"
+               style="color:var(--muted); text-decoration:none;">Change Workout</a>
+            <span>›</span>
+            <a href="{{ url_for('workouts.repository') }}?from_change=1"
+               style="color:var(--muted); text-decoration:none;">Repository</a>
+        {% else %}
+            <a href="{{ url_for('workouts.repository') }}"
+               style="color:var(--muted); text-decoration:none;">Repository</a>
+        {% endif %}
+        <span>›</span>
+        <span style="color:var(--dark-blue); font-weight:600;">{{ workout.name }}</span>
+    </nav>
+
     <div style="margin-bottom:24px;">
         <a href="javascript:history.back()" class="btn-back">Back</a>
     </div>
@@ -17,7 +37,9 @@
         <div class="exercise-item">
             <div class="exercise-item-left">
                 <span class="exercise-item-name">{{ we.exercise.name }}</span>
-                <span class="exercise-item-meta">{{ we.sets_target }} sets · {{ we.reps_target }} reps · {{ we.exercise.muscle_group }}</span>
+                <span class="exercise-item-meta">
+                    {{ we.sets_target }} sets · {{ we.reps_target }} reps · {{ we.exercise.muscle_group }}
+                </span>
             </div>
             <a href="{{ url_for('exercises.guidance', exercise_id=we.exercise.id) }}"
                class="exercise-item-info">Info →</a>

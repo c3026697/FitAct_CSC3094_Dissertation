@@ -6,7 +6,8 @@
     <h1 class="page-title">Progress</h1>
 
     <!-- Stats -->
-    <div style="max-width:520px; margin:24px auto 36px; display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+    <div style="max-width:520px; margin:24px auto 36px;
+                display:grid; grid-template-columns:1fr 1fr; gap:14px;">
         <div class="stat-card">
             <div class="stat-number">{{ logs|length }}</div>
             <div class="stat-label">Workouts completed</div>
@@ -14,7 +15,9 @@
         <div class="stat-card">
             <div class="stat-number">
                 {% set total = namespace(count=0) %}
-                {% for log in logs %}{% set total.count = total.count + log.logged_exercises|length %}{% endfor %}
+                {% for log in logs %}
+                    {% set total.count = total.count + log.logged_exercises|length %}
+                {% endfor %}
                 {{ total.count }}
             </div>
             <div class="stat-label">Sets logged</div>
@@ -23,57 +26,121 @@
 
     <p class="section-heading">Past workouts</p>
 
-    <div style="max-width:700px; margin:0 auto;">
+    <div style="max-width:760px; margin:0 auto;">
         {% if logs %}
             {% for log in logs %}
-            <div class="log-card" style="flex-direction:column; align-items:stretch; padding:0; overflow:hidden;">
+            <div style="background:var(--white); border:1px solid var(--border);
+                        border-radius:var(--radius-lg); margin-bottom:12px;
+                        box-shadow:var(--shadow-sm); overflow:hidden;">
 
                 <!-- Summary row -->
-                <div style="display:flex; align-items:center; padding:18px 22px;">
-                    <div style="flex:1;">
-                        <div class="log-card-name">{{ log.workout.name }}</div>
-                        <div class="log-card-meta">
+                <div style="display:flex; align-items:center; padding:18px 22px; gap:12px;">
+                    <div style="flex:1; min-width:0;">
+                        <div style="font-weight:700; font-size:0.95rem; color:var(--dark-blue); margin-bottom:3px;">
+                            {{ log.workout.name }}
+                        </div>
+                        <div style="font-size:0.8rem; color:var(--muted);">
                             {{ log.completed_at.strftime('%d %b %Y · %H:%M') }}
                             {% if log.duration_seconds %}
-                              · {{ (log.duration_seconds // 60) }}m {{ (log.duration_seconds % 60) }}s
+                                · {{ log.duration_seconds // 60 }}m {{ log.duration_seconds % 60 }}s
                             {% endif %}
                         </div>
-                        <span class="log-card-tag">{{ log.logged_exercises|length }} sets logged</span>
+                        <span style="display:inline-block; margin-top:5px; background:rgba(57,114,191,0.08);
+                                     border-radius:6px; padding:3px 10px; font-size:0.75rem;
+                                     font-weight:600; color:var(--blue);">
+                            {{ log.logged_exercises|length }} sets logged
+                        </span>
                     </div>
-                    <div style="display:flex; gap:8px; align-items:center;">
+
+                    <!-- Action buttons -->
+                    <div style="display:flex; gap:8px; flex-shrink:0; align-items:center;">
                         <button type="button"
                                 onclick="toggleDetail('detail-{{ log.id }}')"
-                                style="background:none; border:1px solid var(--border); border-radius:8px;
-                                       padding:7px 14px; font-size:0.82rem; font-weight:600;
-                                       color:var(--blue); cursor:pointer; font-family:inherit;">
+                                style="background:none; border:1px solid var(--border);
+                                       border-radius:8px; padding:7px 14px; font-size:0.82rem;
+                                       font-weight:600; color:var(--blue); cursor:pointer;
+                                       font-family:inherit; transition:all var(--t);">
                             Details
                         </button>
-                        <form method="POST" action="{{ url_for('progress.delete_log', log_id=log.id) }}">
-                            <button type="submit" class="log-card-delete"
-                                    onclick="return confirm('Delete this log?')">Delete</button>
+                        <a href="{{ url_for('progress.edit_log', log_id=log.id) }}"
+                           style="background:none; border:1px solid var(--border);
+                                  border-radius:8px; padding:7px 14px; font-size:0.82rem;
+                                  font-weight:600; color:var(--dark-blue); cursor:pointer;
+                                  font-family:inherit; text-decoration:none;
+                                  transition:all var(--t);">
+                            Edit
+                        </a>
+                        <form method="POST"
+                              action="{{ url_for('progress.delete_log', log_id=log.id) }}"
+                              style="margin:0;">
+                            <button type="submit"
+                                    onclick="return confirm('Delete this workout log?')"
+                                    style="background:none; border:1px solid var(--border);
+                                           border-radius:8px; padding:7px 14px; font-size:0.82rem;
+                                           font-weight:600; color:var(--muted); cursor:pointer;
+                                           font-family:inherit; transition:all var(--t);"
+                                    onmouseover="this.style.borderColor='#e53e3e';this.style.color='#e53e3e';"
+                                    onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)';">
+                                Delete
+                            </button>
                         </form>
                     </div>
                 </div>
 
-                <!-- Expandable detail -->
+                <!-- Expandable details dropdown -->
                 <div id="detail-{{ log.id }}"
                      style="display:none; border-top:1px solid var(--border);
-                            background:var(--bg); padding:16px 22px;">
-                    {% set grouped = namespace(last='') %}
+                            background:var(--bg); padding:18px 22px;">
+
+                    {% set grouped = namespace(current_ex='', current_name='') %}
+                    {% set sets_by_ex = {} %}
+
+                    {# Group sets by exercise #}
                     {% for le in log.logged_exercises %}
-                    {% if le.exercise.name != grouped.last %}
-                        {% if not loop.first %}</ul>{% endif %}
-                        <div style="font-size:0.82rem; font-weight:700; color:var(--dark-blue); margin:10px 0 4px;">{{ le.exercise.name }}</div>
-                        <ul style="margin:0; padding-left:18px; font-size:0.82rem; color:var(--muted);">
-                        {% set grouped.last = le.exercise.name %}
-                    {% endif %}
-                    <li>
-                        Set {{ le.sets_completed }}:
-                        {{ le.reps_completed }} reps
-                        {% if le.weight_kg %} @ {{ le.weight_kg }}kg{% endif %}
-                    </li>
+                        {% if le.exercise.name not in sets_by_ex %}
+                            {% set _ = sets_by_ex.update({le.exercise.name: []}) %}
+                        {% endif %}
                     {% endfor %}
-                    {% if log.logged_exercises %}</ul>{% endif %}
+
+                    {# Render grouped #}
+                    {% set seen = namespace(names=[]) %}
+                    {% for le in log.logged_exercises %}
+                        {% if le.exercise.name not in seen.names %}
+                            {% set _ = seen.names.append(le.exercise.name) %}
+
+                            <div style="margin-bottom:14px;">
+                                <div style="font-size:0.82rem; font-weight:700;
+                                            color:var(--dark-blue); margin-bottom:6px;">
+                                    {{ le.exercise.name }}
+                                    <span style="font-weight:400; color:var(--muted);
+                                                 font-size:0.75rem; margin-left:6px;">
+                                        {{ le.exercise.muscle_group }}
+                                    </span>
+                                </div>
+                                <div style="display:grid;
+                                            grid-template-columns:36px 1fr 1fr;
+                                            gap:4px 12px; font-size:0.78rem;">
+                                    <div style="color:var(--muted); font-weight:600;">Set</div>
+                                    <div style="color:var(--muted); font-weight:600;">Reps</div>
+                                    <div style="color:var(--muted); font-weight:600;">Weight</div>
+                                    {% for row in log.logged_exercises %}
+                                        {% if row.exercise.name == le.exercise.name %}
+                                        <div style="color:var(--blue); font-weight:600;">
+                                            {{ row.sets_completed }}
+                                        </div>
+                                        <div style="color:var(--dark-blue);">
+                                            {{ row.reps_completed }} reps
+                                        </div>
+                                        <div style="color:var(--dark-blue);">
+                                            {% if row.weight_kg %}{{ row.weight_kg }}kg{% else %}—{% endif %}
+                                        </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
                 </div>
 
             </div>
@@ -81,21 +148,23 @@
         {% else %}
             <div style="text-align:center; padding:60px 20px;">
                 <div style="font-size:3rem; margin-bottom:16px;">📊</div>
-                <p style="color:var(--muted);">No workouts logged yet. Complete your first workout to see it here.</p>
+                <p style="color:var(--muted);">
+                    No workouts logged yet. Complete your first workout to see it here.
+                </p>
             </div>
         {% endif %}
     </div>
 
 </div>
 
-<!-- Badge earned popup -->
+<!-- Badge popup -->
 {% if session.get('new_badge_title') %}
 <div id="badge-popup"
      style="position:fixed; inset:0; background:rgba(1,39,89,0.55);
             display:flex; align-items:center; justify-content:center; z-index:9999;">
     <div style="background:var(--white); border-radius:24px; padding:40px 48px;
-                max-width:400px; width:90%; text-align:center; box-shadow:var(--shadow-lg);
-                animation:fadeUp 0.3s ease both;">
+                max-width:400px; width:90%; text-align:center;
+                box-shadow:var(--shadow-lg); animation:fadeUp 0.3s ease both;">
         <div style="font-size:4rem; margin-bottom:12px;">🏆</div>
         <h2 style="font-size:1.4rem; font-weight:800; color:var(--dark-blue); margin-bottom:8px;">
             Badge Earned!
@@ -121,12 +190,12 @@
 <script>
 function toggleDetail(id) {
     var el = document.getElementById(id);
-    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    var isOpen = el.style.display !== 'none';
+    el.style.display = isOpen ? 'none' : 'block';
 }
 
-// Clear badge session after showing popup
 {% if session.get('new_badge_title') %}
-fetch('/clear-badge-session', {method:'POST'});
+fetch('/clear-badge-session', { method: 'POST' });
 {% endif %}
 </script>
 {% endblock %}

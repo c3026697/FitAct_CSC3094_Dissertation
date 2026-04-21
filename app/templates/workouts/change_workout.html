@@ -3,6 +3,15 @@
 {% block content %}
 <div class="page-content">
 
+    <!-- Breadcrumb -->
+    <nav style="display:flex; align-items:center; gap:8px; font-size:0.8rem;
+                color:var(--muted); margin-bottom:20px; flex-wrap:wrap;">
+        <a href="{{ url_for('workouts.workout_page') }}"
+           style="color:var(--muted); text-decoration:none;">Workout</a>
+        <span>›</span>
+        <span style="color:var(--dark-blue); font-weight:600;">Change Workout</span>
+    </nav>
+
     <div style="margin-bottom:24px;">
         <a href="{{ url_for('workouts.workout_page') }}" class="btn-back">Back to workout</a>
     </div>
@@ -33,18 +42,21 @@
         <div style="padding-left:48px;">
             <h2 class="section-heading">New Workout</h2>
             <div style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
-                <a href="{{ url_for('workouts.repository') }}" class="btn-fitact" style="max-width:100%;">
+                <a href="{{ url_for('workouts.repository') }}?from_change=1"
+                   class="btn-fitact" style="max-width:100%;">
                     From Workouts Repository
                 </a>
-                <a href="{{ url_for('workouts.saved') }}" class="btn-fitact" style="max-width:100%;">
+                <a href="{{ url_for('workouts.saved') }}?from_change=1"
+                   class="btn-fitact" style="max-width:100%;">
                     From Saved Workouts
                 </a>
-                <a href="{{ url_for('workouts.create_custom') }}" class="btn-fitact" style="max-width:100%;">
+                <a href="{{ url_for('workouts.create_custom') }}"
+                   class="btn-fitact" style="max-width:100%;">
                     Create Custom Workout
                 </a>
             </div>
         </div>
-    </div>
 
+    </div>
 </div>
 {% endblock %}

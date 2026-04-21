@@ -3,9 +3,25 @@
 {% block content %}
 <div class="page-content">
 
+    <!-- Breadcrumb -->
+    <nav style="display:flex; align-items:center; gap:8px; font-size:0.8rem;
+                color:var(--muted); margin-bottom:20px; flex-wrap:wrap;">
+        <a href="{{ url_for('workouts.workout_page') }}"
+           style="color:var(--muted); text-decoration:none;">Workout</a>
+        <span>›</span>
+        {% if from_change %}
+            <a href="{{ url_for('workouts.change_workout') }}"
+               style="color:var(--muted); text-decoration:none;">Change Workout</a>
+            <span>›</span>
+        {% endif %}
+        <span style="color:var(--dark-blue); font-weight:600;">Saved Workouts</span>
+    </nav>
+
     {% if from_change %}
     <div style="margin-bottom:20px;">
-        <a href="{{ url_for('workouts.change_workout') }}" class="btn-back">Back to change workout</a>
+        <a href="{{ url_for('workouts.change_workout') }}" class="btn-back">
+            Back to change workout
+        </a>
     </div>
     {% endif %}
 
@@ -18,8 +34,11 @@
         {% if saved_workouts %}
             {% for sw in saved_workouts %}
             <div class="workout-item">
-                <a href="{{ url_for('workouts.workout_info', workout_id=sw.workout.id) }}" class="workout-item-info" style="text-decoration:none;">
-                    <span class="workout-item-day">{% if sw.workout.is_custom %}Custom{% else %}{{ sw.workout.type }}{% endif %}</span>
+                <a href="{{ url_for('workouts.workout_info', workout_id=sw.workout.id) }}{% if from_change %}?from_change=1{% endif %}"
+                   class="workout-item-info" style="text-decoration:none;">
+                    <span class="workout-item-day">
+                        {% if sw.workout.is_custom %}Custom{% else %}{{ sw.workout.type }}{% endif %}
+                    </span>
                     <span class="workout-item-name">{{ sw.workout.name }}</span>
                 </a>
                 <button class="workout-item-btn" onclick="toggleMenu(this)" aria-label="Actions">&#8942;</button>
@@ -28,10 +47,13 @@
                     {% if sw.workout.is_custom and sw.workout.created_by_user_id == current_user.id %}
                     <a href="{{ url_for('workouts.edit_custom', workout_id=sw.workout.id) }}">✏ Edit</a>
                     {% endif %}
-                    <form method="POST" action="{{ url_for('workouts.delete_saved', saved_id=sw.id) }}" style="margin:0;">
-                        <button type="submit" onclick="return confirm('Remove this workout?')">🗑 Delete</button>
+                    <form method="POST"
+                          action="{{ url_for('workouts.delete_saved', saved_id=sw.id) }}"
+                          style="margin:0;">
+                        <button type="submit"
+                                onclick="return confirm('Remove this workout?')">🗑 Delete</button>
                     </form>
-                    <a href="{{ url_for('workouts.workout_info', workout_id=sw.workout.id) }}">ℹ Info</a>
+                    <a href="{{ url_for('workouts.workout_info', workout_id=sw.workout.id) }}{% if from_change %}?from_change=1{% endif %}">ℹ Info</a>
                 </div>
             </div>
             {% endfor %}
@@ -39,7 +61,10 @@
             <div style="text-align:center; padding:60px 20px;">
                 <div style="font-size:3rem; margin-bottom:16px;">📂</div>
                 <p style="color:var(--muted); margin-bottom:20px;">No saved workouts yet.</p>
-                <a href="{{ url_for('workouts.repository') }}" class="btn-fitact" style="max-width:220px; display:inline-block;">Browse repository</a>
+                <a href="{{ url_for('workouts.repository') }}"
+                   class="btn-fitact" style="max-width:220px; display:inline-block;">
+                    Browse repository
+                </a>
             </div>
         {% endif %}
     </div>
@@ -58,7 +83,9 @@ function toggleMenu(btn) {
 }
 document.addEventListener('click', function(e) {
     if (!e.target.classList.contains('workout-item-btn')) {
-        document.querySelectorAll('.action-menu.show').forEach(function(m) { m.classList.remove('show'); });
+        document.querySelectorAll('.action-menu.show').forEach(function(m) {
+            m.classList.remove('show');
+        });
     }
 });
 </script>

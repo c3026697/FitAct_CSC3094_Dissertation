@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% block title %}Edit Workout Log – FitAct{% endblock %}
+{% block content %}
+<div class="page-content" style="max-width:660px;">
+
+    <!-- Breadcrumb -->
+    <nav style="display:flex; align-items:center; gap:8px; font-size:0.8rem;
+                color:var(--muted); margin-bottom:24px; flex-wrap:wrap;">
+        <a href="{{ url_for('progress.progress') }}"
+           style="color:var(--muted); text-decoration:none;">Progress / Log</a>
+        <span>›</span>
+        <span style="color:var(--dark-blue); font-weight:600;">Edit Log</span>
+    </nav>
+
+    <a href="{{ url_for('progress.progress') }}" class="btn-back"
+       style="margin-bottom:20px; display:inline-flex;">Back</a>
+
+    <h1 class="page-title">Edit Workout Log</h1>
+
+    <!-- Fixed info (non-editable) -->
+    <div style="background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-md);
+                padding:14px 20px; margin:20px 0 28px; text-align:center;">
+        <div style="font-weight:700; color:var(--dark-blue); font-size:1rem;">
+            {{ log.workout.name }}
+        </div>
+        <div style="font-size:0.82rem; color:var(--muted); margin-top:3px;">
+            {{ log.completed_at.strftime('%d %b %Y · %H:%M') }}
+            {% if log.duration_seconds %}
+                · {{ log.duration_seconds // 60 }}m {{ log.duration_seconds % 60 }}s
+            {% endif %}
+        </div>
+        <div style="font-size:0.75rem; color:var(--muted); margin-top:4px; font-style:italic;">
+            Date and time cannot be edited
+        </div>
+    </div>
+
+    <form method="POST" action="{{ url_for('progress.edit_log', log_id=log.id) }}">
+
+        {% for ex_id, data in grouped.items() %}
+        <input type="hidden" name="exercise_id" value="{{ ex_id }}">
+        <input type="hidden" name="ex_{{ ex_id }}_we_id" value="{{ data.we_id }}">
+
+        <div style="background:var(--white); border:1px solid var(--border);
+                    border-radius:var(--radius-lg); padding:20px 22px;
+                    margin-bottom:14px; box-shadow:var(--shadow-sm);">
+
+            <div style="font-weight:700; font-size:0.95rem; color:var(--dark-blue);
+                        margin-bottom:4px;">{{ data.exercise.name }}</div>
+            <div style="font-size:0.78rem; color:var(--muted); margin-bottom:14px;">
+                {{ data.exercise.muscle_group }}
+            </div>
+
+            <!-- Column headers -->
+            <div style="display:grid; grid-template-columns:40px 1fr 1fr 32px;
+                        gap:8px; margin-bottom:6px;">
+                <div style="font-size:0.7rem; font-weight:600; color:var(--muted);
+                            text-transform:uppercase;">Set</div>
+                <div style="font-size:0.7rem; font-weight:600; color:var(--muted);
+                            text-transform:uppercase; text-align:center;">Reps</div>
+                <div style="font-size:0.7rem; font-weight:600; color:var(--muted);
+                            text-transform:uppercase; text-align:center;">Weight (kg)</div>
+                <div></div>
+            </div>
+
+            <!-- Existing set rows -->
+            <div id="edit-sets-{{ ex_id }}">
+                {% for i, le in enumerate(data.sets) %}
+                <div class="edit-set-row"
+                     style="display:grid; grid-template-columns:40px 1fr 1fr 32px;
+                            gap:8px; align-items:center; margin-bottom:6px;">
+                    <div style="font-size:0.85rem; font-weight:600; color:var(--blue);
+                                text-align:center;">{{ i + 1 }}</div>
+                    <input type="number"
+                           name="ex_{{ ex_id }}_set_{{ i + 1 }}_reps"
+                           value="{{ le.reps_completed }}" min="0" max="200"
+                           style="padding:9px 10px; border:1.5px solid var(--border);
+                                  border-radius:8px; font-size:0.9rem; text-align:center;
+                                  font-family:inherit; background:var(--bg);
+                                  color:var(--dark-blue); outline:none; width:100%;">
+                    <input type="number"
+                           name="ex_{{ ex_id }}_set_{{ i + 1 }}_weight"
+                           value="{{ le.weight_kg if le.weight_kg else '' }}"
+                           min="0" max="999" step="0.5"
+                           placeholder="—"
+                           style="padding:9px 10px; border:1.5px solid var(--border);
+                                  border-radius:8px; font-size:0.9rem; text-align:center;
+                                  font-family:inherit; background:var(--bg);
+                                  color:var(--dark-blue); outline:none; width:100%;">
+                    <button type="button" onclick="removeEditSet(this)"
+                            style="background:none; border:1px solid var(--border);
+                                   border-radius:6px; width:28px; height:28px;
+                                   cursor:pointer; color:var(--muted); font-size:0.85rem;
+                                   display:flex; align-items:center; justify-content:center;">✕</button>
+                </div>
+                {% endfor %}
+            </div>
+
+            <button type="button"
+                    onclick="addEditSet('edit-sets-{{ ex_id }}', {{ ex_id }})"
+                    style="margin-top:6px; background:none; border:1px dashed var(--border);
+                           border-radius:8px; padding:7px 16px; font-size:0.82rem;
+                           font-weight:600; color:var(--blue); cursor:pointer;
+                           width:100%; font-family:inherit;">
+                + Add set
+            </button>
+        </div>
+        {% endfor %}
+
+        <div style="text-align:center; margin-top:24px; padding-bottom:40px;">
+            <button type="submit" class="btn-fitact"
+                    style="max-width:240px; display:inline-block;">
+                Save changes
+            </button>
+        </div>
+    </form>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function removeEditSet(btn) {
+    var row = btn.closest('.edit-set-row');
+    var container = row.parentElement;
+    if (container.querySelectorAll('.edit-set-row').length <= 1) return;
+    row.remove();
+    renumberEditSets(container);
+}
+
+function renumberEditSets(container) {
+    container.querySelectorAll('.edit-set-row').forEach(function(row, i) {
+        row.querySelector('div').textContent = i + 1;
+        // Update input names to match new set numbers
+        row.querySelectorAll('input[type="number"]').forEach(function(inp) {
+            inp.name = inp.name.replace(/_set_\d+_/, '_set_' + (i + 1) + '_');
+        });
+    });
+}
+
+function addEditSet(containerId, exId) {
+    var container = document.getElementById(containerId);
+    var rows = container.querySelectorAll('.edit-set-row');
+    var nextSet = rows.length + 1;
+
+    var row = document.createElement('div');
+    row.className = 'edit-set-row';
+    row.style.cssText = 'display:grid; grid-template-columns:40px 1fr 1fr 32px; gap:8px; align-items:center; margin-bottom:6px;';
+    row.innerHTML =
+        '<div style="font-size:0.85rem;font-weight:600;color:var(--blue);text-align:center;">' + nextSet + '</div>' +
+        '<input type="number" name="ex_' + exId + '_set_' + nextSet + '_reps" placeholder="0" min="0" max="200" ' +
+        'style="padding:9px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:0.9rem;' +
+        'text-align:center;font-family:inherit;background:var(--bg);color:var(--dark-blue);outline:none;width:100%;">' +
+        '<input type="number" name="ex_' + exId + '_set_' + nextSet + '_weight" placeholder="—" min="0" max="999" step="0.5" ' +
+        'style="padding:9px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:0.9rem;' +
+        'text-align:center;font-family:inherit;background:var(--bg);color:var(--dark-blue);outline:none;width:100%;">' +
+        '<button type="button" onclick="removeEditSet(this)" ' +
+        'style="background:none;border:1px solid var(--border);border-radius:6px;width:28px;height:28px;' +
+        'cursor:pointer;color:var(--muted);font-size:0.85rem;display:flex;align-items:center;justify-content:center;">✕</button>';
+
+    container.appendChild(row);
+}
+</script>
+{% endblock %}

@@ -3,15 +3,28 @@
 {% block content %}
 <div class="page-content" style="max-width:820px;">
 
+    <!-- Breadcrumb -->
+    <nav style="display:flex; align-items:center; gap:8px; font-size:0.8rem;
+                color:var(--muted); margin-bottom:24px;">
+        <a href="{{ url_for('workouts.workout_page') }}"
+           style="color:var(--muted); text-decoration:none;">Workout</a>
+        <span>›</span>
+        <span style="color:var(--dark-blue); font-weight:600;">My Account</span>
+    </nav>
+
     <h1 class="page-title">Your Account</h1>
 
-    <!-- Profile section -->
-    <div style="background:var(--white); border:1px solid var(--border); border-radius:var(--radius-lg);
-                padding:28px 32px; box-shadow:var(--shadow-sm); margin:24px auto 0; max-width:700px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <!-- Profile -->
+    <div style="background:var(--white); border:1px solid var(--border);
+                border-radius:var(--radius-lg); padding:28px 32px;
+                box-shadow:var(--shadow-sm); margin:24px auto 0; max-width:700px;">
+        <div style="display:flex; justify-content:space-between;
+                    align-items:center; margin-bottom:20px;">
             <h2 style="font-size:1rem; font-weight:700; color:var(--dark-blue);">Profile</h2>
             <a href="{{ url_for('main.edit_profile') }}"
-               style="font-size:0.82rem; font-weight:600; color:var(--blue); text-decoration:none;">Edit</a>
+               style="font-size:0.82rem; font-weight:600; color:var(--blue); text-decoration:none;">
+               Edit
+            </a>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
             <div>
@@ -25,24 +38,33 @@
         </div>
     </div>
 
-    <!-- Password section -->
-    <div style="background:var(--white); border:1px solid var(--border); border-radius:var(--radius-lg);
-                padding:28px 32px; box-shadow:var(--shadow-sm); margin:16px auto 0; max-width:700px;">
+    <!-- Password -->
+    <div style="background:var(--white); border:1px solid var(--border);
+                border-radius:var(--radius-lg); padding:28px 32px;
+                box-shadow:var(--shadow-sm); margin:16px auto 0; max-width:700px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <div>
                 <h2 style="font-size:1rem; font-weight:700; color:var(--dark-blue);">Password</h2>
-                <p style="font-size:0.82rem; color:var(--muted); margin-top:4px;">Change your login password</p>
+                <p style="font-size:0.82rem; color:var(--muted); margin-top:4px;">
+                    Change your login password
+                </p>
             </div>
             <a href="{{ url_for('main.change_password') }}"
-               style="font-size:0.82rem; font-weight:600; color:var(--blue); text-decoration:none;">Change</a>
+               style="font-size:0.82rem; font-weight:600; color:var(--blue); text-decoration:none;">
+               Change
+            </a>
         </div>
     </div>
 
-    <!-- Programme section -->
-    <div style="background:var(--white); border:1px solid var(--border); border-radius:var(--radius-lg);
-                padding:28px 32px; box-shadow:var(--shadow-sm); margin:16px auto 0; max-width:700px;">
-        <h2 style="font-size:1rem; font-weight:700; color:var(--dark-blue); margin-bottom:16px;">Programme</h2>
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+    <!-- Programme -->
+    <div style="background:var(--white); border:1px solid var(--border);
+                border-radius:var(--radius-lg); padding:28px 32px;
+                box-shadow:var(--shadow-sm); margin:16px auto 0; max-width:700px;">
+        <h2 style="font-size:1rem; font-weight:700; color:var(--dark-blue); margin-bottom:16px;">
+            Programme
+        </h2>
+        <div style="display:flex; justify-content:space-between; align-items:center;
+                    flex-wrap:wrap; gap:16px;">
             <div style="flex:1; min-width:180px;">
                 <span class="account-field-label">Currently allocated</span>
                 <div class="account-field-box">
@@ -54,10 +76,13 @@
                 </div>
             </div>
             <div style="display:flex; flex-direction:column; gap:10px;">
-                <a href="{{ url_for('programme.change_programme') }}?from=account" class="btn-dark-pill">
-                    Manually change
+                <!-- Pass from=account so back button on change page returns here -->
+                <a href="{{ url_for('programme.change_programme') }}?from=account"
+                   class="btn-dark-pill">
+                    Manually change programme
                 </a>
-                <a href="{{ url_for('questionnaire.questionnaire') }}" class="btn-dark-pill">
+                <a href="{{ url_for('questionnaire.questionnaire') }}"
+                   class="btn-dark-pill">
                     Get new recommendation
                 </a>
             </div>

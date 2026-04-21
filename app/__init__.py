@@ -10,6 +10,7 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login_manager.init_app(app)
     bcrypt.init_app(app)
+    app.jinja_env.globals['enumerate'] = enumerate
 
     from app.auth.routes import auth_bp
     from app.main.routes import main_bp

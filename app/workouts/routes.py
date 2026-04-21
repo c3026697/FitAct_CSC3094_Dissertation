@@ -94,8 +94,7 @@ def set_workout(workout_id):
 @workouts_bp.route('/workouts')
 @login_required
 def repository():
-    # Track referrer so we can show back button if coming from change_workout
-    from_change = request.referrer and 'workout/change' in request.referrer
+    from_change = request.args.get('from_change', '0') == '1'
     workouts = Workout.query.filter_by(is_custom=False).order_by(Workout.name).all()
     saved_ids = {sw.workout_id for sw in SavedWorkout.query.filter_by(user_id=current_user.id).all()}
     return render_template('workouts/repository.html',
@@ -115,10 +114,10 @@ def workout_info(workout_id):
     is_saved = SavedWorkout.query.filter_by(
         user_id=current_user.id, workout_id=workout_id
     ).first() is not None
-    back_url = request.referrer or url_for('workouts.repository')
+    from_change = request.args.get('from_change', '0') == '1'
     return render_template('workouts/workout_info.html',
                            workout=workout, exercises=exercises,
-                           is_saved=is_saved, back_url=back_url)
+                           is_saved=is_saved, from_change=from_change)
 
 
 @workouts_bp.route('/workouts/<int:workout_id>/save', methods=['POST'])
@@ -145,7 +144,7 @@ def start_from_repository(workout_id):
 @workouts_bp.route('/workouts/saved')
 @login_required
 def saved():
-    from_change = request.referrer and 'workout/change' in request.referrer
+    from_change = request.args.get('from_change', '0') == '1'
     saved_workouts = (
         SavedWorkout.query
         .filter_by(user_id=current_user.id)
@@ -197,8 +196,9 @@ def create_custom():
 
         db.session.add(SavedWorkout(user_id=current_user.id, workout_id=workout.id))
         db.session.commit()
-        flash(f'"{name}" created and saved.', 'success')
-        return redirect(url_for('workouts.saved'))
+        flash(f'Custom workout "{name}" created successfully and can be accessed via Saved Workouts.', 'success')
+        # Always return to change workout page after creating a custom workout
+        return redirect(url_for('workouts.change_workout'))
 
     return render_template('workouts/create_custom.html', exercises=exercises)
 
