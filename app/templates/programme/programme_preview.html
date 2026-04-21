@@ -3,9 +3,29 @@
 {% block content %}
 <div class="page-content" style="max-width:560px;">
 
-    <div style="margin-bottom:24px;">
-        <a href="{{ url_for('programme.change_programme') }}" class="btn-back">Back to programmes</a>
-    </div>
+    {% set from_page = request.args.get('from', 'account') %}
+
+    <!-- Breadcrumb -->
+    <nav style="display:flex; align-items:center; gap:8px; font-size:0.8rem;
+                color:var(--muted); margin-bottom:28px; flex-wrap:wrap;">
+        {% if from_page == 'programme' %}
+            <a href="{{ url_for('workouts.workout_page') }}" style="color:var(--muted); text-decoration:none;">Workout</a>
+            <span>›</span>
+            <a href="{{ url_for('programme.my_programme') }}" style="color:var(--muted); text-decoration:none;">My Programme</a>
+            <span>›</span>
+            <a href="{{ url_for('programme.change_programme') }}?from=programme"
+               style="color:var(--muted); text-decoration:none;">Change Programme</a>
+        {% else %}
+            <a href="{{ url_for('workouts.workout_page') }}" style="color:var(--muted); text-decoration:none;">Workout</a>
+            <span>›</span>
+            <a href="{{ url_for('main.account') }}" style="color:var(--muted); text-decoration:none;">My Account</a>
+            <span>›</span>
+            <a href="{{ url_for('programme.change_programme') }}?from=account"
+               style="color:var(--muted); text-decoration:none;">Change Programme</a>
+        {% endif %}
+        <span>›</span>
+        <span style="color:var(--dark-blue); font-weight:600;">{{ programme.name }}</span>
+    </nav>
 
     <h1 class="page-title">{{ programme.name }}</h1>
     <p style="text-align:center; color:var(--muted); font-size:0.875rem; margin-bottom:28px;">
@@ -15,12 +35,12 @@
     <div class="workout-list">
         {% for pw in programme.programme_workouts %}
         <div class="workout-item">
-            <a href="{{ url_for('programme.workout_preview', programme_id=programme.id, workout_id=pw.workout.id) }}"
+            <a href="{{ url_for('programme.workout_preview', programme_id=programme.id, workout_id=pw.workout.id) }}?from={{ from_page }}"
                class="workout-item-info" style="text-decoration:none;">
                 <span class="workout-item-day">Day {{ pw.day_number }}</span>
                 <span class="workout-item-name">{{ pw.workout.name }}</span>
             </a>
-            <a href="{{ url_for('programme.workout_preview', programme_id=programme.id, workout_id=pw.workout.id) }}"
+            <a href="{{ url_for('programme.workout_preview', programme_id=programme.id, workout_id=pw.workout.id) }}?from={{ from_page }}"
                class="workout-item-btn" style="text-decoration:none; color:var(--blue);">→</a>
         </div>
         {% endfor %}

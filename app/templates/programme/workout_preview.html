@@ -3,9 +3,32 @@
 {% block content %}
 <div class="page-content" style="max-width:560px;">
 
-    <div style="margin-bottom:24px;">
-        <a href="{{ url_for('programme.programme_preview', programme_id=programme_id) }}" class="btn-back">Back</a>
-    </div>
+    {% set from_page = request.args.get('from', 'account') %}
+
+    <!-- Breadcrumb -->
+    <nav style="display:flex; align-items:center; gap:8px; font-size:0.8rem;
+                color:var(--muted); margin-bottom:28px; flex-wrap:wrap;">
+        {% if from_page == 'programme' %}
+            <a href="{{ url_for('workouts.workout_page') }}" style="color:var(--muted); text-decoration:none;">Workout</a>
+            <span>›</span>
+            <a href="{{ url_for('programme.my_programme') }}" style="color:var(--muted); text-decoration:none;">My Programme</a>
+            <span>›</span>
+            <a href="{{ url_for('programme.change_programme') }}?from=programme"
+               style="color:var(--muted); text-decoration:none;">Change Programme</a>
+        {% else %}
+            <a href="{{ url_for('workouts.workout_page') }}" style="color:var(--muted); text-decoration:none;">Workout</a>
+            <span>›</span>
+            <a href="{{ url_for('main.account') }}" style="color:var(--muted); text-decoration:none;">My Account</a>
+            <span>›</span>
+            <a href="{{ url_for('programme.change_programme') }}?from=account"
+               style="color:var(--muted); text-decoration:none;">Change Programme</a>
+        {% endif %}
+        <span>›</span>
+        <a href="{{ url_for('programme.programme_preview', programme_id=programme_id) }}?from={{ from_page }}"
+           style="color:var(--muted); text-decoration:none;">{{ workout.name.split()[0] }}...</a>
+        <span>›</span>
+        <span style="color:var(--dark-blue); font-weight:600;">{{ workout.name }}</span>
+    </nav>
 
     <h1 class="page-title">{{ workout.name }}</h1>
     <p style="text-align:center; color:var(--muted); font-size:0.875rem; margin-bottom:28px;">
@@ -17,7 +40,9 @@
         <div class="exercise-item">
             <div class="exercise-item-left">
                 <span class="exercise-item-name">{{ we.exercise.name }}</span>
-                <span class="exercise-item-meta">{{ we.sets_target }} sets · {{ we.reps_target }} reps · {{ we.exercise.muscle_group }}</span>
+                <span class="exercise-item-meta">
+                    {{ we.sets_target }} sets · {{ we.reps_target }} reps · {{ we.exercise.muscle_group }}
+                </span>
             </div>
         </div>
         {% endfor %}

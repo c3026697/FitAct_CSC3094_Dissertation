@@ -3,12 +3,25 @@
 {% block content %}
 <div class="page-content">
 
-    <div style="display:flex; align-items:center; margin-bottom:24px;">
+    <!-- Breadcrumb -->
+    <nav style="display:flex; align-items:center; gap:8px; font-size:0.8rem;
+                color:var(--muted); margin-bottom:20px;">
+        <a href="{{ url_for('workouts.workout_page') }}" style="color:var(--muted); text-decoration:none;">Workout</a>
+        <span>›</span>
+        <span style="color:var(--dark-blue); font-weight:600;">My Programme</span>
+    </nav>
+
+    <!-- Top bar: back left, action buttons right -->
+    <div style="display:flex; align-items:center; justify-content:space-between;
+                margin-bottom:28px; flex-wrap:wrap; gap:12px;">
         <a href="{{ url_for('workouts.workout_page') }}" class="btn-back">Back</a>
-        <div style="flex:1;"></div>
         <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
-            <a href="{{ url_for('programme.change_programme') }}?from=programme" class="btn-dark-pill">Manually change</a>
-            <a href="{{ url_for('questionnaire.questionnaire') }}" class="btn-dark-pill">Get new recommendation</a>
+            <a href="{{ url_for('programme.change_programme') }}?from=programme" class="btn-dark-pill">
+                Manually change
+            </a>
+            <a href="{{ url_for('questionnaire.questionnaire') }}" class="btn-dark-pill">
+                Get new recommendation
+            </a>
         </div>
     </div>
 
@@ -43,7 +56,9 @@
         <h1 class="page-title">My Programme</h1>
         <div style="text-align:center; padding:60px 20px;">
             <div style="font-size:3rem; margin-bottom:16px;">📋</div>
-            <p style="color:var(--muted); margin-bottom:20px;">You haven't been allocated a programme yet.</p>
+            <p style="color:var(--muted); margin-bottom:20px;">
+                You haven't been allocated a programme yet.
+            </p>
             <a href="{{ url_for('questionnaire.questionnaire') }}"
                class="btn-fitact" style="max-width:240px; display:inline-block;">
                Get my recommended programme

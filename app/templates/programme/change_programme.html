@@ -3,21 +3,31 @@
 {% block content %}
 <div class="page-content" style="max-width:560px;">
 
-    <div style="margin-bottom:24px;">
-        {% set back = request.args.get('from', 'account') %}
-        {% if back == 'programme' %}
-            <a href="{{ url_for('programme.my_programme') }}" class="btn-back">Back</a>
+    <!-- Breadcrumb -->
+    {% set from_page = request.args.get('from', 'account') %}
+    <nav style="display:flex; align-items:center; gap:8px; font-size:0.8rem;
+                color:var(--muted); margin-bottom:28px; flex-wrap:wrap;">
+        {% if from_page == 'programme' %}
+            <a href="{{ url_for('workouts.workout_page') }}" style="color:var(--muted); text-decoration:none;">Workout</a>
+            <span>›</span>
+            <a href="{{ url_for('programme.my_programme') }}" style="color:var(--muted); text-decoration:none;">My Programme</a>
+            <span>›</span>
+            <span style="color:var(--dark-blue); font-weight:600;">Change Programme</span>
         {% else %}
-            <a href="{{ url_for('main.account') }}" class="btn-back">Back</a>
+            <a href="{{ url_for('workouts.workout_page') }}" style="color:var(--muted); text-decoration:none;">Workout</a>
+            <span>›</span>
+            <a href="{{ url_for('main.account') }}" style="color:var(--muted); text-decoration:none;">My Account</a>
+            <span>›</span>
+            <span style="color:var(--dark-blue); font-weight:600;">Change Programme</span>
         {% endif %}
-    </div>
+    </nav>
 
     <h1 class="page-title">Choose a programme</h1>
     <p style="text-align:center; color:var(--muted); font-size:0.875rem; margin-bottom:32px;">
-        Select a training split. Click the arrow to preview its workouts.
+        Select a training split. Click → to preview its workouts before choosing.
     </p>
 
-    <form method="POST" action="{{ url_for('programme.change_programme') }}{% if request.args.get('from') %}?from={{ request.args.get('from') }}{% endif %}">
+    <form method="POST" action="{{ url_for('programme.change_programme') }}?from={{ from_page }}">
         <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:28px;">
             {% for prog in all_programmes %}
             <div style="display:flex; align-items:center; gap:8px;">
@@ -30,7 +40,7 @@
                         {{ prog.name }}
                     </div>
                 </label>
-                <a href="{{ url_for('programme.programme_preview', programme_id=prog.id) }}"
+                <a href="{{ url_for('programme.programme_preview', programme_id=prog.id) }}?from={{ from_page }}"
                    style="flex-shrink:0; width:36px; height:36px; display:flex; align-items:center;
                           justify-content:center; border:1px solid var(--border); border-radius:8px;
                           color:var(--blue); text-decoration:none; font-size:1rem;
