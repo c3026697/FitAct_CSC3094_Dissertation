@@ -1,6 +1,104 @@
 {% extends 'base.html' %}
 {% block title %}Questionnaire – FitAct{% endblock %}
 {% block content %}
-<h2>Onboarding Questionnaire</h2>
-<p class="text-muted">Coming Tuesday.</p>
+<div class="page-content" style="max-width: 640px; margin: 0 auto;">
+
+    {% if is_update %}
+    <div style="margin-bottom: 24px;">
+        <a href="{{ url_for('programme.my_programme') }}" class="btn-cancel">
+            Cancel <span class="cancel-x">&#10005;</span>
+        </a>
+    </div>
+    {% endif %}
+
+    <div style="margin-bottom: 28px;">
+        <div class="fitact-progress">
+            <div class="fitact-progress-bar" style="width: 33%;"></div>
+        </div>
+    </div>
+
+    <form method="POST" action="{{ url_for('questionnaire.questionnaire') }}" id="q-form">
+
+        <!-- Question 1: Training days -->
+        <div class="q-section" id="q1">
+            <h2 style="font-size:1.4rem; font-weight:800; color:#012759; margin-bottom:24px;">
+                How many days per week can you commit to training?
+            </h2>
+            <div>
+                <button type="button" class="choice-btn" data-q="days" data-val="2" onclick="selectChoice(this, 'days', 2)">1–2 days</button>
+                <button type="button" class="choice-btn" data-q="days" data-val="3" onclick="selectChoice(this, 'days', 3)">3 days</button>
+                <button type="button" class="choice-btn" data-q="days" data-val="4" onclick="selectChoice(this, 'days', 4)">4 days</button>
+                <button type="button" class="choice-btn" data-q="days" data-val="5" onclick="selectChoice(this, 'days', 5)">5 days</button>
+                <button type="button" class="choice-btn" data-q="days" data-val="6" onclick="selectChoice(this, 'days', 6)">6–7 days</button>
+            </div>
+            <input type="hidden" name="days" id="days-input" required>
+        </div>
+
+        <!-- Question 2: Experience -->
+        <div class="q-section" id="q2" style="display:none; margin-top:32px;">
+            <div style="margin-bottom:24px;">
+                <div class="fitact-progress"><div class="fitact-progress-bar" style="width:66%;"></div></div>
+            </div>
+            <h2 style="font-size:1.4rem; font-weight:800; color:#012759; margin-bottom:24px;">
+                How long have you been training with weights?
+            </h2>
+            <div>
+                <button type="button" class="choice-btn" data-q="experience" data-val="beginner" onclick="selectChoice(this, 'experience', 'beginner')">Never / Less than 6 months</button>
+                <button type="button" class="choice-btn" data-q="experience" data-val="intermediate" onclick="selectChoice(this, 'experience', 'intermediate')">6 months – 2 years</button>
+                <button type="button" class="choice-btn" data-q="experience" data-val="advanced" onclick="selectChoice(this, 'experience', 'advanced')">More than 2 years</button>
+            </div>
+            <input type="hidden" name="experience" id="experience-input" required>
+        </div>
+
+        <!-- Question 3: Goal -->
+        <div class="q-section" id="q3" style="display:none; margin-top:32px;">
+            <div style="margin-bottom:24px;">
+                <div class="fitact-progress"><div class="fitact-progress-bar" style="width:100%;"></div></div>
+            </div>
+            <h2 style="font-size:1.4rem; font-weight:800; color:#012759; margin-bottom:24px;">
+                What is your primary goal?
+            </h2>
+            <div>
+                <button type="button" class="choice-btn" data-q="goal" data-val="strength" onclick="selectChoice(this, 'goal', 'strength')">Build strength and muscle</button>
+                <button type="button" class="choice-btn" data-q="goal" data-val="fitness" onclick="selectChoice(this, 'goal', 'fitness')">Lose weight / get fitter</button>
+                <button type="button" class="choice-btn" data-q="goal" data-val="general" onclick="selectChoice(this, 'goal', 'general')">General fitness and health</button>
+            </div>
+            <input type="hidden" name="goal" id="goal-input" required>
+            <div style="margin-top: 32px; text-align:center;">
+                <button type="submit" class="btn-fitact" style="max-width:260px;">
+                    {% if is_update %}Get my new recommendation{% else %}Find my programme{% endif %}
+                </button>
+            </div>
+        </div>
+
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+var state = { days: null, experience: null, goal: null };
+
+function selectChoice(btn, question, value) {
+    // Highlight selected button
+    document.querySelectorAll('[data-q="' + question + '"]').forEach(function(b) {
+        b.classList.remove('selected');
+    });
+    btn.classList.add('selected');
+
+    state[question] = value;
+    document.getElementById(question + '-input').value = value;
+
+    // Advance to next question after short delay
+    setTimeout(function() {
+        if (question === 'days') {
+            document.getElementById('q1').style.display = 'none';
+            document.getElementById('q2').style.display = 'block';
+        } else if (question === 'experience') {
+            document.getElementById('q2').style.display = 'none';
+            document.getElementById('q3').style.display = 'block';
+        }
+    }, 300);
+}
+</script>
 {% endblock %}

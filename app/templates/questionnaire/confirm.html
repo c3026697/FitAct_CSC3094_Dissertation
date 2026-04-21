@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}New Programme – FitAct{% endblock %}
+{% block content %}
+<div class="page-content" style="max-width: 600px; margin: 0 auto; text-align: center;">
+
+    <h1 class="page-title">Your Recommended Programme</h1>
+
+    <div style="margin: 32px 0;">
+        <div style="border: 2px solid #3972bf; border-radius: 16px; padding: 28px 40px; display: inline-block;">
+            <p style="color:#012759; font-size:1rem; margin-bottom:8px;">Based on your answers, we recommend:</p>
+            <h2 style="color:#3972bf; font-size:1.8rem; font-weight:800; margin:0;">{{ programme_name }}</h2>
+        </div>
+    </div>
+
+    <p style="color:#012759; margin-bottom:32px;">Would you like to switch to this programme?</p>
+
+    <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
+        <form method="POST" action="{{ url_for('questionnaire.confirm_accept') }}">
+            <button type="submit" class="btn-fitact" style="max-width:220px;">Yes, switch programme</button>
+        </form>
+        <a href="{{ url_for('questionnaire.confirm_cancel') }}" class="btn-dark-pill">Keep current programme</a>
+    </div>
+
+</div>
+{% endblock %}

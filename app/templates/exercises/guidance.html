@@ -1,14 +1,26 @@
 {% extends 'base.html' %}
-{% block title %}Exercise Guidance – FitAct{% endblock %}
+{% block title %}{{ exercise.name }} – FitAct{% endblock %}
 {% block content %}
-<div class="page-content">
+<div class="page-content" style="max-width:640px; margin:0 auto;">
 
     <div style="margin-bottom:24px;">
-        <a href="{{ url_for('workouts.workout_page') }}" class="btn-back">&#8592;</a>
+        <a href="javascript:history.back()" class="btn-back">&#8592;</a>
     </div>
 
-    <h1 class="page-title">Exercise Guidance</h1>
-    <h2 class="section-heading">Coming Wednesday.</h2>
+    <h1 class="page-title">{{ exercise.name }}</h1>
+    <p class="section-heading">Exercise Guidance:</p>
+
+    <div style="margin-top:24px; background:#f4f7fb; border-radius:14px; padding:28px 32px;">
+        <p style="color:#012759; font-size:1rem; line-height:1.8; font-weight:500;">
+            {{ exercise.guidance_text }}
+        </p>
+    </div>
+
+    <div style="margin-top:20px; text-align:center;">
+        <span style="display:inline-block; background:#3972bf; color:#fff; border-radius:8px; padding:8px 20px; font-size:0.9rem; font-weight:600;">
+            Muscle group: {{ exercise.muscle_group }}
+        </span>
+    </div>
 
 </div>
 {% endblock %}

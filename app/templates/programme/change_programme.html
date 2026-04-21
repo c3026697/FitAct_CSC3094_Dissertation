@@ -1,11 +1,51 @@
 {% extends 'base.html' %}
 {% block title %}Choose Programme – FitAct{% endblock %}
 {% block content %}
-<div class="page-content">
+<div class="page-content" style="max-width:640px; margin:0 auto;">
+
     <div style="margin-bottom:24px;">
-        <a href="{{ url_for('main.account') }}" class="btn-cancel">Cancel <span class="cancel-x">✕</span></a>
+        <a href="{{ url_for('programme.my_programme') }}" class="btn-cancel">
+            Cancel <span class="cancel-x">&#10005;</span>
+        </a>
     </div>
+
     <h1 class="page-title">Choose a new programme</h1>
-    <p class="text-center text-fitact-dark mt-4">Coming Tuesday.</p>
+
+    <form method="POST" action="{{ url_for('programme.change_programme') }}" style="margin-top:32px;">
+        <div style="display:flex; flex-direction:column; gap:14px; max-width:480px; margin:0 auto;">
+            {% for prog in all_programmes %}
+            <label style="cursor:pointer;">
+                <input type="radio" name="programme_id" value="{{ prog.id }}"
+                       {% if current_user.current_programme_id == prog.id %}checked{% endif %}
+                       style="display:none;" class="prog-radio">
+                <div class="choice-btn prog-option" style="margin:0; border-radius:10px;">
+                    {{ prog.name }}
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+
+        <div style="text-align:center; margin-top:32px;">
+            <button type="submit" class="btn-fitact" style="max-width:220px;">Save &amp; Exit</button>
+        </div>
+    </form>
+
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.prog-radio').forEach(function(radio) {
+    // Highlight already-selected on load
+    if (radio.checked) {
+        radio.nextElementSibling.classList.add('selected');
+    }
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('.prog-option').forEach(function(d) {
+            d.classList.remove('selected');
+        });
+        this.nextElementSibling.classList.add('selected');
+    });
+});
+</script>
 {% endblock %}
