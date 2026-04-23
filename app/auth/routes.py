@@ -3,71 +3,74 @@ from flask_login import login_user, logout_user, login_required, current_user
 from app.extensions import db, bcrypt
 from app.models import User
 
-auth_bp = Blueprint('auth', __name__)
+auth_bp = Blueprint("auth", __name__)
 
-@auth_bp.route('/register', methods=['GET', 'POST'])
+
+@auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
-    if request.method == 'POST':
-        username = request.form.get('username', '').strip()
-        email = request.form.get('email', '').strip().lower()
-        password = request.form.get('password', '')
-        confirm_password = request.form.get('confirm_password', '')
+        return redirect(url_for("main.home"))
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "")
+        confirm_password = request.form.get("confirm_password", "")
 
         error = None
         if not username or not email or not password:
-            error = 'All fields are required.'
+            error = "All fields are required."
         elif len(username) < 3:
-            error = 'Username must be at least 3 characters.'
+            error = "Username must be at least 3 characters."
         elif len(password) < 6:
-            error = 'Password must be at least 6 characters.'
+            error = "Password must be at least 6 characters."
         elif password != confirm_password:
-            error = 'Passwords do not match.'
+            error = "Passwords do not match."
         elif User.query.filter_by(username=username).first():
-            error = 'Username already taken.'
+            error = "Username already taken."
         elif User.query.filter_by(email=email).first():
-            error = 'An account with that email already exists.'
+            error = "An account with that email already exists."
 
         if error:
-            flash(error, 'danger')
-            return render_template('auth/register.html')
+            flash(error, "danger")
+            return render_template("auth/register.html")
 
-        password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+        password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
         user = User(username=username, email=email, password_hash=password_hash)
         db.session.add(user)
         db.session.commit()
-        flash('Account created! Please log in.', 'success')
-        return redirect(url_for('auth.register_success'))
+        flash("Account created! Please log in.", "success")
+        return redirect(url_for("auth.register_success"))
 
-    return render_template('auth/register.html')
+    return render_template("auth/register.html")
 
-@auth_bp.route('/login', methods=['GET', 'POST'])
+
+@auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
-    if request.method == 'POST':
-        email = request.form.get('email', '').strip().lower()
-        password = request.form.get('password', '')
+        return redirect(url_for("main.home"))
+    if request.method == "POST":
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "")
         user = User.query.filter_by(email=email).first()
         if not user or not bcrypt.check_password_hash(user.password_hash, password):
-            flash('Invalid email or password.', 'danger')
-            return render_template('auth/login.html')
+            flash("Invalid email or password.", "danger")
+            return render_template("auth/login.html")
         login_user(user)
-        next_page = request.args.get('next')
+        next_page = request.args.get("next")
         if not user.current_programme_id:
-            return redirect(url_for('questionnaire.questionnaire'))
-        return redirect(next_page or url_for('workouts.workout_page'))
-    return render_template('auth/login.html')
+            return redirect(url_for("questionnaire.questionnaire"))
+        return redirect(next_page or url_for("workouts.workout_page"))
+    return render_template("auth/login.html")
 
-@auth_bp.route('/logout')
+
+@auth_bp.route("/logout")
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out.', 'info')
-    return redirect(url_for('auth.login'))
+    flash("You have been logged out.", "info")
+    return redirect(url_for("auth.login"))
 
 
-@auth_bp.route('/register/success')
+@auth_bp.route("/register/success")
 def register_success():
-    return render_template('auth/register_success.html')
+    return render_template("auth/register_success.html")

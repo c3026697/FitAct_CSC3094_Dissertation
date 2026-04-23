@@ -2,6 +2,7 @@ from flask import Flask
 from app.extensions import db, migrate, login_manager, bcrypt
 from config import Config
 
+
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
@@ -10,7 +11,7 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login_manager.init_app(app)
     bcrypt.init_app(app)
-    app.jinja_env.globals['enumerate'] = enumerate
+    app.jinja_env.globals["enumerate"] = enumerate
 
     from app.auth.routes import auth_bp
     from app.main.routes import main_bp
