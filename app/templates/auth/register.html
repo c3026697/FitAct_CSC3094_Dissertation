@@ -7,6 +7,37 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .password-rules {
+            list-style: none;
+            padding: 10px 0 0 0;
+            margin: 0 0 16px 0;
+        }
+        .password-rules li {
+            font-size: 0.78rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 5px;
+            transition: color 0.2s ease;
+        }
+        .password-rules li .rule-icon {
+            font-size: 0.75rem;
+            transition: color 0.2s ease;
+        }
+        .password-rules li.satisfied {
+            color: #2e7d32;
+        }
+        .password-rules li.satisfied .rule-icon::before {
+            content: "✓";
+            color: #2e7d32;
+        }
+        .password-rules li:not(.satisfied) .rule-icon::before {
+            content: "○";
+            color: #bbb;
+        }
+    </style>
 </head>
 <body style="background:var(--bg); min-height:100vh; display:flex; flex-direction:column;">
 
@@ -40,17 +71,45 @@
                         margin-bottom:24px; text-align:center;">Create your account</h2>
 
             <form method="POST" action="{{ url_for('auth.register') }}">
+
                 <label style="display:block; font-size:0.78rem; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Username</label>
-                <input type="text" name="username" class="fitact-input" style="margin:0 0 16px 0; max-width:100%;" placeholder="Choose a username" required>
+                <input type="text" name="username" class="fitact-input"
+                       style="margin:0 0 16px 0; max-width:100%;"
+                       placeholder="Choose a username" required>
 
                 <label style="display:block; font-size:0.78rem; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Email</label>
-                <input type="email" name="email" class="fitact-input" style="margin:0 0 16px 0; max-width:100%;" placeholder="you@example.com" required>
+                <input type="email" name="email" class="fitact-input"
+                       style="margin:0 0 16px 0; max-width:100%;"
+                       placeholder="you@example.com" required>
 
                 <label style="display:block; font-size:0.78rem; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Password</label>
-                <input type="password" name="password" class="fitact-input" style="margin:0 0 16px 0; max-width:100%;" placeholder="At least 6 characters" required>
+                <input type="password" name="password" id="password" class="fitact-input"
+                       style="margin:0 0 8px 0; max-width:100%;"
+                       placeholder="Create a strong password" required>
+
+                <!-- Live password policy checklist -->
+                <ul class="password-rules" id="password-rules">
+                    <li id="rule-length">
+                        <span class="rule-icon"></span> Between 8 and 15 characters
+                    </li>
+                    <li id="rule-upper">
+                        <span class="rule-icon"></span> At least 1 uppercase letter
+                    </li>
+                    <li id="rule-lower">
+                        <span class="rule-icon"></span> At least 1 lowercase letter
+                    </li>
+                    <li id="rule-digit">
+                        <span class="rule-icon"></span> At least 1 digit
+                    </li>
+                    <li id="rule-special">
+                        <span class="rule-icon"></span> At least 1 special character (e.g. !@#$)
+                    </li>
+                </ul>
 
                 <label style="display:block; font-size:0.78rem; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px;">Confirm password</label>
-                <input type="password" name="confirm_password" class="fitact-input" style="margin:0 0 24px 0; max-width:100%;" placeholder="Repeat password" required>
+                <input type="password" name="confirm_password" class="fitact-input"
+                       style="margin:0 0 24px 0; max-width:100%;"
+                       placeholder="Repeat password" required>
 
                 <button type="submit" class="btn-fitact">Create account</button>
             </form>
@@ -62,5 +121,30 @@
         </p>
     </div>
 </div>
+
+<script>
+    const passwordInput = document.getElementById("password");
+
+    const rules = {
+        "rule-length":  (p) => p.length >= 8 && p.length <= 15,
+        "rule-upper":   (p) => /[A-Z]/.test(p),
+        "rule-lower":   (p) => /[a-z]/.test(p),
+        "rule-digit":   (p) => /\d/.test(p),
+        "rule-special": (p) => /\W/.test(p),
+    };
+
+    passwordInput.addEventListener("input", function () {
+        const value = this.value;
+        for (const [id, check] of Object.entries(rules)) {
+            const li = document.getElementById(id);
+            if (check(value)) {
+                li.classList.add("satisfied");
+            } else {
+                li.classList.remove("satisfied");
+            }
+        }
+    });
+</script>
+
 </body>
 </html>
