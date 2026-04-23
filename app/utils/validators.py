@@ -7,7 +7,6 @@ the frontend checklist to ensure consistency.
 
 import re
 
-
 # Password policy constants
 PASSWORD_MIN_LENGTH = 8
 PASSWORD_MAX_LENGTH = 15
