@@ -1,6 +1,13 @@
-from flask import Flask
+"""FitAct application factory.
+
+Creates and configures the Flask application instance, initialises
+all extensions, and registers all blueprints.
+"""
+
+from flask import Flask, render_template
 from app.extensions import db, migrate, login_manager, bcrypt
 from config import Config
+from flask_login import current_user
 
 
 def create_app(config_class=Config):
@@ -32,5 +39,22 @@ def create_app(config_class=Config):
     app.register_blueprint(tracking_bp)
     app.register_blueprint(progress_bp)
     app.register_blueprint(achievements_bp)
+
+    # ── Error handlers ────────────────────────────────────────────────────
+    @app.errorhandler(400)
+    def bad_request(e):
+        return render_template("errors/400.html", current_user=current_user), 400
+
+    @app.errorhandler(404)
+    def not_found(e):
+        return render_template("errors/404.html", current_user=current_user), 404
+
+    @app.errorhandler(500)
+    def internal_server_error(e):
+        return render_template("errors/500.html", current_user=current_user), 500
+
+    @app.errorhandler(501)
+    def not_implemented(e):
+        return render_template("errors/501.html", current_user=current_user), 501
 
     return app

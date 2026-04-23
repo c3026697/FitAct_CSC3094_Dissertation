@@ -1,6 +1,14 @@
+"""Workouts blueprint for FitAct.
+
+Handles the workout page displaying today's scheduled workout, the
+workout repository, saved workouts, custom workout creation and editing,
+and workout selection from the user's allocated programme (FR3, FR4, FR5).
+"""
+
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session
 from flask_login import login_required, current_user
 from app.extensions import db
+from app.main.routes import main_bp
 from app.models import (
     ProgrammeWorkout,
     Workout,

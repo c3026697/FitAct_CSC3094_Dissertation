@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 Internal Server Error – FitAct</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body style="background:var(--bg); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:40px 20px;">
+
+    <div style="width:100%; max-width:480px; text-align:center;">
+
+        <div class="logo-block" style="margin-bottom:32px;">
+            <img src="/static/images/logo.png" alt="FitAct logo" style="width:80px; height:auto;">
+            <h1 class="logo-text">FitAct</h1>
+            <p class="logo-slogan">From Fitness Awareness to Action</p>
+        </div>
+
+        <div style="background:var(--white); border:1px solid var(--border);
+                    border-radius:20px; padding:48px 40px; box-shadow:var(--shadow-md);">
+
+            <p style="font-size:4rem; font-weight:800; color:var(--dark-blue); margin:0 0 8px 0; line-height:1;">500</p>
+            <h2 style="font-size:1.4rem; font-weight:700; color:var(--dark-blue); margin:0 0 20px 0;">Internal Server Error</h2>
+
+            <p style="color:var(--muted); font-size:0.95rem; line-height:1.7; margin:0 0 12px 0;">
+                Something went wrong on our end. The server encountered an unexpected
+                condition that prevented it from completing your request.
+            </p>
+            <p style="color:var(--muted); font-size:0.95rem; line-height:1.7; margin:0 0 28px 0;">
+                This is not an issue with your account or data. Please try again
+                in a moment or use the button below to return to a safe page.
+            </p>
+
+            {% if current_user.is_authenticated %}
+                <a href="/workout" class="btn-fitact" style="display:inline-block; text-decoration:none;">
+                    Back to Workout
+                </a>
+            {% else %}
+                <a href="/login" class="btn-fitact" style="display:inline-block; text-decoration:none;">
+                    Go to Login
+                </a>
+            {% endif %}
+
+        </div>
+    </div>
+
+</body>
+</html>
