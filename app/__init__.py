@@ -8,6 +8,7 @@ from flask import Flask, render_template
 from app.extensions import db, migrate, login_manager, bcrypt
 from config import Config
 from flask_login import current_user
+from app.security.firewall import firewall_check
 
 
 def create_app(config_class=Config):
@@ -39,6 +40,7 @@ def create_app(config_class=Config):
     app.register_blueprint(tracking_bp)
     app.register_blueprint(progress_bp)
     app.register_blueprint(achievements_bp)
+    app.before_request(firewall_check)
 
     # ── Error handlers ────────────────────────────────────────────────────
     @app.errorhandler(400)

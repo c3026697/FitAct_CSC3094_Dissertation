@@ -9,6 +9,7 @@ from flask_login import login_required, current_user
 from app.extensions import db, bcrypt
 from app.models import User
 from flask import session as flask_session
+from flask import request as flask_request
 
 main_bp = Blueprint("main", __name__)
 
@@ -89,3 +90,9 @@ def clear_badge_session():
     flask_session.pop("new_badge_title", None)
     flask_session.pop("new_badge_description", None)
     return "", 204
+
+
+@main_bp.route("/blocked")
+def firewall_blocked():
+    attack = flask_request.args.get("attack", "Unknown")
+    return render_template("errors/firewall_blocked.html", attack=attack), 403
