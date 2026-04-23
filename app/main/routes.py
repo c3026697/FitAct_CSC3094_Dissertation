@@ -1,3 +1,9 @@
+"""Main blueprint for FitAct.
+
+Handles the home index redirect, account management, profile editing,
+password changes, and badge session clearing.
+"""
+
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app.extensions import db, bcrypt

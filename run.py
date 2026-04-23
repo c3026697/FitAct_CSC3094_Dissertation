@@ -1,3 +1,5 @@
+"""Entry point for the FitAct Flask application."""
+
 from app import create_app
 
 app = create_app()

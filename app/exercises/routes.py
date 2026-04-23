@@ -1,3 +1,9 @@
+"""Exercises blueprint for FitAct.
+
+Provides exercise guidance pages accessible via the Info button
+during workout browsing and execution (FR6).
+"""
+
 from flask import Blueprint, render_template
 from flask_login import login_required
 from app.models import Exercise

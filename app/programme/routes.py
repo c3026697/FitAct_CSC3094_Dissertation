@@ -1,3 +1,9 @@
+"""Programme blueprint for FitAct.
+
+Handles viewing the user's currently allocated programme, manually
+changing the programme, and previewing programmes and their workouts (FR2, FR3).
+"""
+
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
 from app.extensions import db

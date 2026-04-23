@@ -1,3 +1,9 @@
+"""Achievements blueprint for FitAct.
+
+Displays all milestone-based badges and tracks which ones the
+current user has earned (FR9).
+"""
+
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
 from app.models import Achievement, UserAchievement

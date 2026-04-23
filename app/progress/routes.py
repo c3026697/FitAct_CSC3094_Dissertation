@@ -1,3 +1,9 @@
+"""Progress blueprint for FitAct.
+
+Handles viewing past workout logs, editing logged exercise data,
+and deleting workout logs from the progress page (FR8).
+"""
+
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app.extensions import db

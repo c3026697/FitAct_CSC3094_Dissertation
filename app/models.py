@@ -1,3 +1,10 @@
+"""SQLAlchemy database models for FitAct.
+
+Defines the twelve core entities: User, Programme, ProgrammeWorkout,
+Workout, WorkoutExercise, Exercise, QuestionnaireResponse, SavedWorkout,
+WorkoutLog, LoggedExercise, Achievement, and UserAchievement.
+"""
+
 from datetime import datetime
 from flask_login import UserMixin
 from app.extensions import db, login_manager

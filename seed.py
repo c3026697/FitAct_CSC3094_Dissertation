@@ -1,9 +1,26 @@
 """
-seed.py — Run this once to populate the database with all predefined
-programmes, workouts, and exercises as defined in the FitAct dissertation.
+Database seeding script for FitAct.
+
+Populates the database with all predefined data required for the application
+to function. This script is idempotent — it checks for existing records before
+inserting, so it can be safely re-run without creating duplicates.
+
+Seeded in order:
+    1. Exercises   — 24 exercises with muscle group and guidance text.
+    2. Workouts    — 12 predefined workouts with associated exercises,
+                     sets, reps, and exercise order.
+    3. Programmes  — 5 training programmes (Full Body, Upper/Lower,
+                     Push/Pull/Legs) with their workout schedules.
+    4. Achievements — Milestone-based badges awarded during user activity.
 
 Usage:
     python seed.py
+
+Note:
+    Requires the application to be configured with a valid DATABASE_URL.
+    Run Flask-Migrate first to ensure all tables exist before seeding:
+        flask db upgrade
+        python seed.py
 """
 
 from app import create_app

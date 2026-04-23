@@ -1,3 +1,10 @@
+"""Questionnaire blueprint for FitAct.
+
+Contains the constraint-based recommendation engine and routes for
+onboarding questionnaire completion, programme confirmation, and
+programme update flows (FR1, FR2).
+"""
+
 from flask import Blueprint, render_template, redirect, url_for, request, session, flash
 from flask_login import login_required, current_user
 from app.extensions import db

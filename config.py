@@ -1,3 +1,9 @@
+"""Application configuration classes for FitAct.
+
+Config: base production configuration loaded from environment variables.
+TestingConfig: overrides for the test suite using an in-memory SQLite database.
+"""
+
 import os
 from dotenv import load_dotenv
 

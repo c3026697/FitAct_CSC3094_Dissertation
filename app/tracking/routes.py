@@ -1,3 +1,9 @@
+"""Tracking blueprint for FitAct.
+
+Handles workout execution, per-set progress logging, and
+milestone badge award logic triggered on workout completion (FR7, FR8, FR9).
+"""
+
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session
 from flask_login import login_required, current_user
 from datetime import datetime
