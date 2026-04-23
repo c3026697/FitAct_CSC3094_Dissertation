@@ -42,15 +42,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Initialise test database
-        run: |
-          python -c "
-          from app import create_app, db
-          app = create_app()
-          with app.app_context():
-              db.create_all()
-          "
-
       - name: Run Black (code style check)
         run: |
           black --check app tests config.py run.py
