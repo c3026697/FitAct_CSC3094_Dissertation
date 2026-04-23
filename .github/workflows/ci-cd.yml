@@ -1,0 +1,177 @@
+name: FitAct CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  REPO_LOWER: ${{ github.event.repository.name }}
+  OWNER_LOWER: ${{ github.repository_owner }}
+
+jobs:
+
+  # ──────────────────────────────────────────────
+  # JOB 1: TEST
+  # Runs on every push and pull request to main.
+  # Uses SQLite as the test database — no external
+  # service required.
+  # ──────────────────────────────────────────────
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+      DATABASE_URL: sqlite:///test_fitact.db
+      FLASK_ENV: testing
+      SECRET_KEY: fitact-ci-secret-key
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Initialise test database
+        run: |
+          python -c "
+          from app import create_app, db
+          app = create_app()
+          with app.app_context():
+              db.create_all()
+          "
+
+      - name: Run Black (code style check)
+        run: |
+          black --check app tests config.py run.py
+
+      - name: Run tests
+        run: |
+          pytest tests/ -v
+
+  # ──────────────────────────────────────────────
+  # JOB 2: SAST — Static Application Security Testing
+  # CodeQL scans the Python codebase for
+  # vulnerabilities on every push to main.
+  # ──────────────────────────────────────────────
+  sast:
+    name: SAST (CodeQL)
+    runs-on: ubuntu-latest
+
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ "python" ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialise CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+          queries: security-extended
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
+
+  # ──────────────────────────────────────────────
+  # JOB 3: DELIVER
+  # Builds a production-ready Docker image and
+  # pushes it to GitHub Container Registry (GHCR).
+  # Only runs on pushes to main after test AND
+  # sast jobs pass successfully.
+  # ──────────────────────────────────────────────
+  deliver:
+    name: Build & Push Docker Image
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: [ test, sast ]
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker image (commit-tagged)
+        run: |
+          OWNER=$(echo "${OWNER_LOWER}" | tr '[:upper:]' '[:lower:]')
+          REPO=$(echo "${REPO_LOWER}" | tr '[:upper:]' '[:lower:]')
+          IMAGE_SHA="ghcr.io/${OWNER}/${REPO}/fitact:${{ github.sha }}"
+          echo "IMAGE_SHA=$IMAGE_SHA" >> $GITHUB_ENV
+          docker build -t "$IMAGE_SHA" .
+
+      - name: Push Docker image (commit-tagged)
+        run: |
+          docker push "$IMAGE_SHA"
+
+  # ──────────────────────────────────────────────
+  # JOB 4: DEPLOY
+  # Promotes the commit-tagged image to :latest
+  # in GHCR. This is the image used for local
+  # deployment (NFR6) and scaling (NFR7).
+  # ──────────────────────────────────────────────
+  deploy:
+    name: Promote Image to Latest
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: deliver
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Promote commit image to :latest
+        run: |
+          OWNER=$(echo "${OWNER_LOWER}" | tr '[:upper:]' '[:lower:]')
+          REPO=$(echo "${REPO_LOWER}" | tr '[:upper:]' '[:lower:]')
+          IMAGE_SHA="ghcr.io/${OWNER}/${REPO}/fitact:${{ github.sha }}"
+          IMAGE_LATEST="ghcr.io/${OWNER}/${REPO}/fitact:latest"
+
+          echo "Pulling commit-tagged image: $IMAGE_SHA"
+          docker pull "$IMAGE_SHA"
+
+          echo "Tagging as latest: $IMAGE_LATEST"
+          docker tag "$IMAGE_SHA" "$IMAGE_LATEST"
+
+          echo "Pushing :latest tag to GHCR"
+          docker push "$IMAGE_LATEST"
+
+          echo "Delivery complete. NFR6/NFR7 can now pull: $IMAGE_LATEST"

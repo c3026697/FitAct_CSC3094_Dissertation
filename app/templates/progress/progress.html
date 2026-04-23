@@ -34,9 +34,11 @@
                         box-shadow:var(--shadow-sm); overflow:hidden;">
 
                 <!-- Summary row -->
-                <div style="display:flex; align-items:center; padding:18px 22px; gap:12px;">
+                <div style="display:flex; align-items:center;
+                            padding:18px 22px; gap:12px; flex-wrap:wrap;">
                     <div style="flex:1; min-width:0;">
-                        <div style="font-weight:700; font-size:0.95rem; color:var(--dark-blue); margin-bottom:3px;">
+                        <div style="font-weight:700; font-size:0.95rem;
+                                    color:var(--dark-blue); margin-bottom:3px;">
                             {{ log.workout.name }}
                         </div>
                         <div style="font-size:0.8rem; color:var(--muted);">
@@ -45,8 +47,9 @@
                                 · {{ log.duration_seconds // 60 }}m {{ log.duration_seconds % 60 }}s
                             {% endif %}
                         </div>
-                        <span style="display:inline-block; margin-top:5px; background:rgba(57,114,191,0.08);
-                                     border-radius:6px; padding:3px 10px; font-size:0.75rem;
+                        <span style="display:inline-block; margin-top:5px;
+                                     background:rgba(57,114,191,0.08); border-radius:6px;
+                                     padding:3px 10px; font-size:0.75rem;
                                      font-weight:600; color:var(--blue);">
                             {{ log.logged_exercises|length }} sets logged
                         </span>
@@ -55,19 +58,19 @@
                     <!-- Action buttons -->
                     <div style="display:flex; gap:8px; flex-shrink:0; align-items:center;">
                         <button type="button"
-                                onclick="toggleDetail('detail-{{ log.id }}')"
-                                style="background:none; border:1px solid var(--border);
-                                       border-radius:8px; padding:7px 14px; font-size:0.82rem;
-                                       font-weight:600; color:var(--blue); cursor:pointer;
+                                onclick="toggleDetail('detail-{{ log.id }}', this)"
+                                style="background:none; border:1px solid var(--blue);
+                                       border-radius:8px; padding:7px 14px;
+                                       font-size:0.82rem; font-weight:600;
+                                       color:var(--blue); cursor:pointer;
                                        font-family:inherit; transition:all var(--t);">
                             Details
                         </button>
                         <a href="{{ url_for('progress.edit_log', log_id=log.id) }}"
                            style="background:none; border:1px solid var(--border);
                                   border-radius:8px; padding:7px 14px; font-size:0.82rem;
-                                  font-weight:600; color:var(--dark-blue); cursor:pointer;
-                                  font-family:inherit; text-decoration:none;
-                                  transition:all var(--t);">
+                                  font-weight:600; color:var(--dark-blue);
+                                  text-decoration:none; transition:all var(--t);">
                             Edit
                         </a>
                         <form method="POST"
@@ -76,69 +79,100 @@
                             <button type="submit"
                                     onclick="return confirm('Delete this workout log?')"
                                     style="background:none; border:1px solid var(--border);
-                                           border-radius:8px; padding:7px 14px; font-size:0.82rem;
-                                           font-weight:600; color:var(--muted); cursor:pointer;
+                                           border-radius:8px; padding:7px 14px;
+                                           font-size:0.82rem; font-weight:600;
+                                           color:var(--muted); cursor:pointer;
                                            font-family:inherit; transition:all var(--t);"
-                                    onmouseover="this.style.borderColor='#e53e3e';this.style.color='#e53e3e';"
-                                    onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)';">
+                                    onmouseover="this.style.borderColor='#e53e3e';
+                                                 this.style.color='#e53e3e';"
+                                    onmouseout="this.style.borderColor='var(--border)';
+                                                this.style.color='var(--muted)';">
                                 Delete
                             </button>
                         </form>
                     </div>
                 </div>
 
-                <!-- Expandable details dropdown -->
+                <!-- Expandable details -->
                 <div id="detail-{{ log.id }}"
                      style="display:none; border-top:1px solid var(--border);
-                            background:var(--bg); padding:18px 22px;">
+                            background:var(--bg); padding:20px 22px;">
 
-                    {% set grouped = namespace(current_ex='', current_name='') %}
-                    {% set sets_by_ex = {} %}
-
-                    {# Group sets by exercise #}
+                    {# Build a list of unique exercise names in order #}
+                    {% set ex_names = [] %}
                     {% for le in log.logged_exercises %}
-                        {% if le.exercise.name not in sets_by_ex %}
-                            {% set _ = sets_by_ex.update({le.exercise.name: []}) %}
+                        {% if le.exercise.name not in ex_names %}
+                            {% set _ = ex_names.append(le.exercise.name) %}
                         {% endif %}
                     {% endfor %}
 
-                    {# Render grouped #}
-                    {% set seen = namespace(names=[]) %}
-                    {% for le in log.logged_exercises %}
-                        {% if le.exercise.name not in seen.names %}
-                            {% set _ = seen.names.append(le.exercise.name) %}
+                    {% for ex_name in ex_names %}
+                        {# Get all logged rows for this exercise #}
+                        {% set rows = [] %}
+                        {% for le in log.logged_exercises %}
+                            {% if le.exercise.name == ex_name %}
+                                {% set _ = rows.append(le) %}
+                            {% endif %}
+                        {% endfor %}
 
-                            <div style="margin-bottom:14px;">
-                                <div style="font-size:0.82rem; font-weight:700;
-                                            color:var(--dark-blue); margin-bottom:6px;">
-                                    {{ le.exercise.name }}
-                                    <span style="font-weight:400; color:var(--muted);
-                                                 font-size:0.75rem; margin-left:6px;">
-                                        {{ le.exercise.muscle_group }}
-                                    </span>
-                                </div>
-                                <div style="display:grid;
-                                            grid-template-columns:36px 1fr 1fr;
-                                            gap:4px 12px; font-size:0.78rem;">
-                                    <div style="color:var(--muted); font-weight:600;">Set</div>
-                                    <div style="color:var(--muted); font-weight:600;">Reps</div>
-                                    <div style="color:var(--muted); font-weight:600;">Weight</div>
-                                    {% for row in log.logged_exercises %}
-                                        {% if row.exercise.name == le.exercise.name %}
-                                        <div style="color:var(--blue); font-weight:600;">
-                                            {{ row.sets_completed }}
-                                        </div>
-                                        <div style="color:var(--dark-blue);">
-                                            {{ row.reps_completed }} reps
-                                        </div>
-                                        <div style="color:var(--dark-blue);">
-                                            {% if row.weight_kg %}{{ row.weight_kg }}kg{% else %}—{% endif %}
-                                        </div>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
+                        <div style="margin-bottom:18px;">
+                            <!-- Exercise header -->
+                            <div style="display:flex; align-items:center;
+                                        gap:8px; margin-bottom:8px;">
+                                <span style="font-size:0.88rem; font-weight:700;
+                                             color:var(--dark-blue);">
+                                    {{ ex_name }}
+                                </span>
+                                <span style="font-size:0.72rem; color:var(--muted);
+                                             background:var(--white); border:1px solid var(--border);
+                                             border-radius:20px; padding:2px 8px;">
+                                    {{ rows[0].exercise.muscle_group }}
+                                </span>
                             </div>
-                        {% endif %}
+
+                            <!-- Sets table -->
+                            <div style="background:var(--white); border:1px solid var(--border);
+                                        border-radius:10px; overflow:hidden;">
+                                <!-- Header row -->
+                                <div style="display:grid; grid-template-columns:52px 1fr 1fr;
+                                            gap:0; background:rgba(57,114,191,0.05);
+                                            border-bottom:1px solid var(--border);
+                                            padding:8px 16px;">
+                                    <div style="font-size:0.7rem; font-weight:700;
+                                                color:var(--muted); text-transform:uppercase;
+                                                letter-spacing:0.06em;">Set</div>
+                                    <div style="font-size:0.7rem; font-weight:700;
+                                                color:var(--muted); text-transform:uppercase;
+                                                letter-spacing:0.06em;">Reps</div>
+                                    <div style="font-size:0.7rem; font-weight:700;
+                                                color:var(--muted); text-transform:uppercase;
+                                                letter-spacing:0.06em;">Weight</div>
+                                </div>
+
+                                <!-- Data rows — one per set -->
+                                {% for le in rows %}
+                                <div style="display:grid; grid-template-columns:52px 1fr 1fr;
+                                            gap:0; padding:10px 16px;
+                                            {% if not loop.last %}border-bottom:1px solid var(--border);{% endif %}
+                                            align-items:center;">
+                                    <div style="font-size:0.85rem; font-weight:700;
+                                                color:var(--blue);">
+                                        {{ loop.index }}
+                                    </div>
+                                    <div style="font-size:0.88rem; color:var(--dark-blue);">
+                                        {{ le.reps_completed }} reps
+                                    </div>
+                                    <div style="font-size:0.88rem; color:var(--dark-blue);">
+                                        {% if le.weight_kg %}
+                                            {{ le.weight_kg }}kg
+                                        {% else %}
+                                            <span style="color:var(--muted);">—</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
                     {% endfor %}
 
                 </div>
@@ -166,10 +200,10 @@
                 max-width:400px; width:90%; text-align:center;
                 box-shadow:var(--shadow-lg); animation:fadeUp 0.3s ease both;">
         <div style="font-size:4rem; margin-bottom:12px;">🏆</div>
-        <h2 style="font-size:1.4rem; font-weight:800; color:var(--dark-blue); margin-bottom:8px;">
-            Badge Earned!
-        </h2>
-        <h3 style="font-size:1.1rem; font-weight:700; color:var(--blue); margin-bottom:12px;">
+        <h2 style="font-size:1.4rem; font-weight:800;
+                    color:var(--dark-blue); margin-bottom:8px;">Badge Earned!</h2>
+        <h3 style="font-size:1.1rem; font-weight:700;
+                    color:var(--blue); margin-bottom:12px;">
             {{ session.get('new_badge_title') }}
         </h3>
         <p style="color:var(--muted); font-size:0.9rem; margin-bottom:28px;">
@@ -188,10 +222,11 @@
 
 {% block scripts %}
 <script>
-function toggleDetail(id) {
+function toggleDetail(id, btn) {
     var el = document.getElementById(id);
     var isOpen = el.style.display !== 'none';
     el.style.display = isOpen ? 'none' : 'block';
+    btn.style.background = isOpen ? 'none' : 'rgba(57,114,191,0.08)';
 }
 
 {% if session.get('new_badge_title') %}
