@@ -50,8 +50,8 @@ def test_app_uses_sqlite_in_tests(app):
 
 
 def test_home_page_returns_200(client):
-    """Verify the home/landing page is accessible."""
-    response = client.get("/")
+    """Verify the home/landing page redirects and resolves successfully."""
+    response = client.get("/", follow_redirects=True)
     assert response.status_code == 200
 
 
@@ -62,6 +62,6 @@ def test_login_page_returns_200(client):
 
 
 def test_signup_page_returns_200(client):
-    """Verify the signup page is accessible."""
-    response = client.get("/signup")
+    """Verify the register page is accessible."""
+    response = client.get("/register")
     assert response.status_code == 200
